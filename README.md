@@ -94,7 +94,7 @@ Implement BrickGame v2.0:
 - Classes must be implemented within the `s21` namespace.
 - The library that implements the game logic must be covered by unit tests. 
 - Pay special attention to checking FMS states and transitions. Use the GTest library for testing. The coverage of the library with tests must be at least 80 percent.
-- The program must be built using a Makefile with the standard set of targets for GNU programs: all, install, uninstall, clean, dvi, dist, tests. The installation directory can be arbitrary.
+- The program must be built using a Makefile with the standard set of targets for GNU programs: all, install, uninstall, clean, dvi, dist, test. The installation directory can be arbitrary.
 - The implementation must have a GUI based on one of the GUI libraries with an API for C++17:
   - Qt
   - GTK+
