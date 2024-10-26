@@ -1,4 +1,4 @@
-#include "view.h"
+#include "view.hpp"
 
 
 void PrintOverlay(void) {
@@ -57,10 +57,10 @@ void PrintRectangle(int top_y, int bottom_y, int left_x, int right_x) {
   MVADDCH(bottom_y, i, ACS_LRCORNER);
 }
 
-void PrintStats(GameInfo_t *stats) {
-  MVPRINTW(3, BOARD_M + 8, "%05d", stats->high_score);
-  MVPRINTW(7, BOARD_M + 8, "%05d", stats->score);
-  MVPRINTW(11, BOARD_M + 11, "%02d", stats->level);
+void PrintStats(GameInfo_t stats) {
+  MVPRINTW(3, BOARD_M + 8, "%05d", stats.high_score);
+  MVPRINTW(7, BOARD_M + 8, "%05d", stats.score);
+  MVPRINTW(11, BOARD_M + 11, "%02d", stats.level);
 }
 
 void PrintField() {
@@ -96,8 +96,8 @@ void ClearPause() {
   MVPRINTW(2, 8, "              ");
 }
 
-void PrintTime(int hours, int minutes) {
-  MVPRINTW(23, BOARD_M + 8, "%02d:%02d", hours, minutes);
+void PrintTime(int realtime[2]) {
+  MVPRINTW(23, BOARD_M + 8, "%02d:%02d", realtime[0], realtime[1]);
 }
 
 void ClearTetramino(Tetramino_t tetramino) {
@@ -123,21 +123,17 @@ void PrintBoard(int field[ROWS_MAP][COLS_MAP]) {
   }
 }
 
-void PrintGameOver(GameInfo_t *stats) {
+void PrintGameOver(GameInfo_t stats) {
   MVPRINTW(1, 10, "GAME OVER");
-  MVPRINTW(2, 8, "%s %d", "Your score: ", stats->score);
+  MVPRINTW(2, 8, "%s %d", "Your score: ", stats.score);
   refresh();
   napms(3000);
 }
 
-void PrintNextTetramino(Params_t *prms) {
-  Tetramino_t tetramino = *prms->tetramino;
-  tetramino.type++;
-  tetramino.variant = 0;
-  GetTetramino(&tetramino);
+void PrintNextTetramino(int figure[4][4]) {
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
-      if (tetramino.figure[x][y]) {
+      if (figure[x][y]) {
         MVPRINTW(15 + x, 33 + y * 3 + 2, BLOCK);
       } else {
         CLEAR_BACKPOS(15 + x, 33 + y * 3 + 2);
@@ -146,7 +142,9 @@ void PrintNextTetramino(Params_t *prms) {
   }
 }
 
-void UpdateView(Params_t *prms) {
-  PrintStats(prms->stats);
-  PrintBoard(*prms->stats->field);
+void UpdateView(GameInfo_t game_info_) {
+  PrintStats(game_info_);
+  PrintBoard(game_info_.field);
+  PrintTetramino(*game_info_.tetramino);
+  PrintTime(game_info_.realtime);
 }

@@ -4,8 +4,7 @@
 #include <locale.h>
 #include <unistd.h>
 #include <wchar.h>
-#include "../../brick_game/tetris/defines.h"
-#include "../../brick_game/tetris/model.h"
+#include "../../brick_game/tetris/model.hpp"
 
 /**
  * @file frontend.h Файл имеет основные функции для отрисовки поля игры,
@@ -37,7 +36,7 @@ void PrintRectangle(int top_y, int bottom_y, int left_x, int right_x);
  * @param stats Указатель на структуру с информацией об игре (GameInfo_t),
  * включающей максимальный счет, текущий счет и уровень.
  */
-void PrintStats(GameInfo_t *stats);
+void PrintStats(GameInfo_t stats);
 
 /**
  * @brief Печатает игровое поле на экране.
@@ -61,7 +60,7 @@ void PrintBoard(int field[ROWS_MAP][COLS_MAP]);
  * @param stats Указатель на структуру с информацией об игре (GameInfo_t),
  * включающей текущий счет.
  */
-void PrintGameOver(GameInfo_t *stats);
+void PrintGameOver(GameInfo_t stats);
 
 /**
  * @brief Отображает текущее тетромино на игровом поле.
@@ -88,9 +87,9 @@ void PrintPause();
  * @brief Очищает сообщение о паузе.
  */
 void ClearPause();
-void PrintTime(int hours, int minutes);
+void PrintTime(int realtime[2]);
 
-void PrintNextTetramino(Params_t *prms);
+void PrintNextTetramino(int figure[4][4]);
 
-void UpdateView(Params_t *prms);
+void UpdateView(GameInfo_t game_info);
 #endif
