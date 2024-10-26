@@ -4,11 +4,12 @@
 #include <locale.h>
 #include <math.h>
 #include <ncurses.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 #include <time.h>
 #include <array>
+
+// #include <sys/time.h>
+// #include <stdlib.h>
 
 #include "defines.hpp"
 
@@ -245,6 +246,12 @@ class Tetris {
   void GameResume();
 
   void GetRealTime();
+  int Offset(struct timespec last_time, struct timespec current_time);
+
+  void SetHold(int x) {
+    game_info_->hold = x;
+  }
 };
+
 
 #endif

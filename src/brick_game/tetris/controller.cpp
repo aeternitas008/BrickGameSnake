@@ -25,14 +25,14 @@ typedef void (Tetris::*action)();
 
 void userInput(UserAction_t signal, bool hold) {
   Tetris tetris;
-
+  GameInfo_t game_info = tetris.updateCurrentState();
+  if (hold) tetris.SetHold(hold);
   action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, &Tetris::Shifting, &Tetris::GameOver, &Tetris::ExitState};
 
   action fsm_table[2][9] = {
       {&Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
       {&Tetris::Check, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check},
   };
-  GameInfo_t game_info = tetris.updateCurrentState();
   action act;
   if (game_info.state != MOVING && game_info.state != START) {
     act = fsm_simple[game_info.state];
@@ -54,11 +54,27 @@ void GameLoop() {
   tetris.GetRealTime();
   PrintTime(game_info.realtime);
   int signal = 0;
+  struct timespec hold_start_time;
+  int hold_down = 0;
   while (no_break) {
     game_info = tetris.updateCurrentState();
     int hold = 0;
     if (game_info.state == MOVING || game_info.state == START) signal = GET_USER_INPUT;
-    // if (signal == KEY_DOWN) hold = 1;
+    if (signal == KEY_DOWN) {
+      if (hold_down == 0) {
+        clock_gettime(CLOCK_REALTIME, &hold_start_time);
+        hold_down = 1;
+      } else {
+        struct timespec current_time;
+        clock_gettime(CLOCK_REALTIME, &current_time);
+        if (tetris.Offset(hold_start_time, current_time) >= 200) {
+          MVPRINTW(29, 30, "%s", "elaps yes, hold 1");
+          hold = 1;
+          hold_down = 0;
+        }
+      }
+    } 
+    else hold_down = 0;
     userInput(GetSignal(signal), hold);
 
     if(game_info.pause == 1) {
@@ -72,11 +88,14 @@ void GameLoop() {
       tetris.GameResume();
     }
 
-
     if (game_info.state != START) {
       UpdateView(game_info);
       PrintNextTetramino(game_info.next);
     }
+
+    MVPRINTW(30, 30, "%s %d", "hold", hold); 
+    if (game_info.state == GAMEOVER) PrintGameOver (game_info);
     if (game_info.state == EXIT_STATE) no_break = FALSE;
+    napms(15);
   }
 }

@@ -119,7 +119,7 @@ void Tetris::StatsInit() {
 }
 
 
-int Offset(struct timespec last_time, struct timespec current_time) {
+int Tetris::Offset(struct timespec last_time, struct timespec current_time) {
   int seconds = (current_time.tv_sec - last_time.tv_sec) * 1000;
   int nanoseconds = (current_time.tv_nsec - last_time.tv_nsec) / 1e6;
   int total_offset = seconds + nanoseconds;
@@ -220,7 +220,6 @@ void Tetris::Spawn() {
   GetPseudoRandomTypeTetramino();
   Tetramino_t next_tetramino = *game_info_->tetramino;
   next_tetramino.type = game_info_->tetramino->next_type;
-  next_tetramino.type = 1;
   GetFigure(&next_tetramino);
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -287,19 +286,19 @@ bool Tetris::IsBlockLeft() {
 }
 
 void Tetris::MoveDown() {
+  MVPRINTW(31, 30, "%s %.4lf", "game hold", game_info_->hold);
   if (IsNotBlockBelow()) {
     do {
       game_info_->tetramino->point->x += 1;
     } while (game_info_->hold && IsNotBlockBelow());
     if (game_info_->hold) {
+      MVPRINTW(32, 30, "%s %.4lf", "i am here", game_info_->hold);
       AddTetraminoOnBoard();
-      game_info_->tetramino->type = (game_info_->tetramino->type + 1) % 7;
       game_info_->state = SPAWN;
       game_info_->hold = 0;
     }
   } else {
     AddTetraminoOnBoard();
-    game_info_->tetramino->type = (game_info_->tetramino->type + 1) % 7;
     game_info_->state = SPAWN;
   }
   Check();
