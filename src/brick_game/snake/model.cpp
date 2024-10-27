@@ -1,9 +1,10 @@
 #include "model.hpp"
+#include "defines.hpp"
 
 int Snake::IsBodySnake(Position_t point) {
   int result = 1;
   for (Position_t pos : game_info_->snake->points) {
-    if (pos.x == point.x || pos.y == point.y) result = 0;
+    if (pos.x == point.x && pos.y == point.y) result = 0;
   }
   return result;
 }
@@ -13,7 +14,7 @@ void Snake::GetRandomCoordiantes() {
   point.x = rand() % 20;
   point.y = rand() % 10;
 
-  while (!IsBodySnake(point)) {
+  while (IsBodySnake(point)) {
     point.x = rand() % 20;
     point.y = rand() % 10;
   }
@@ -55,7 +56,7 @@ int Snake::IsCollision(Position_t* new_point) {
 int Snake::IsEating(Position_t new_point) {
   int result = 0;
   Snake_t *snake = game_info_->snake;
-  if (game_info_->apple->x == new_point.x || game_info_->apple->y == new_point.y) result = 1;
+  if (game_info_->apple->x == new_point.x && game_info_->apple->y == new_point.y) result = 1;
   return result;
 }
 
@@ -69,7 +70,7 @@ void Snake::InitBoard(int field[ROWS_MAP][COLS_MAP]) {
 
 void Snake::SnakePosInit() {
   std::deque<Position_t> mydeq(4, {SNAKE_START_X, SNAKE_START_Y});
-  for (Position_t pos : mydeq) {
+  for (auto& pos : mydeq) {
     pos.y += 1;
   }
   game_info_->snake->points = mydeq;

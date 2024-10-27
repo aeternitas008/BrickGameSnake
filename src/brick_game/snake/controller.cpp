@@ -24,8 +24,8 @@ UserAction_t GetSignal(int user_input) {
 typedef void (Snake::*action)();
 
 void userInput(UserAction_t signal, bool hold) {
-  Snake Snake;
-  GameInfo_t game_info = Snake.updateCurrentState();
+  Snake snake;
+  GameInfo_t game_info = snake.updateCurrentState();
 
   action fsm_simple[6] = { nullptr, &Snake::Spawn, nullptr, &Snake::Shifting, &Snake::GameOver, &Snake::ExitState};
 
@@ -43,7 +43,7 @@ void userInput(UserAction_t signal, bool hold) {
     act = fsm_table[state][signal];
   }
   if (act) {
-    (Snake.*act)();
+    (snake.*act)();
   }
 }
 
@@ -63,31 +63,18 @@ void GameLoop() {
   Snake Snake;
   GameInfo_t game_info;
   int signal = 0, hold_down = 0;
-  struct timespec hold_start_time, current_time;
   while (no_break) {
     game_info = Snake.updateCurrentState();
     Snake.GetRealTime();
     PrintTime(game_info.realtime);
     int hold = 0;
     if (game_info.state == MOVING || game_info.state == START) signal = GET_USER_INPUT;
-    if (signal == KEY_DOWN) {
-      if (hold_down == 0) {
-        clock_gettime(CLOCK_REALTIME, &hold_start_time);
-        hold_down = 1;
-      } else {
-        clock_gettime(CLOCK_REALTIME, &current_time);
-        if (Snake.Offset(hold_start_time, current_time) >= 60) {
-          hold = 1;
-          hold_down = 0;
-        }
-      }
-    }
-    else hold_down = 0;
+ 
     userInput(GetSignal(signal), hold);
-    if (game_info.state == SPAWN) {
-      flushinp();
-      hold_down = 0;  // Сбрасываем hold_down, чтобы новое тетрамино не двигалось сразу быстро вниз
-    }
+    // if (game_info.state == SPAWN) {
+    //   flushinp();
+    //   hold_down = 0;  // Сбрасываем hold_down, чтобы новое тетрамино не двигалось сразу быстро вниз
+    // }
     if(game_info.pause == 1) {
       PauseGame(Snake, game_info);
     }

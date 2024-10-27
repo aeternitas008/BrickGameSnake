@@ -1,5 +1,5 @@
-#ifndef BACKEND_H
-#define BACKEND_H
+#ifndef SNAKE_H
+#define SNAKE_H
 
 #include <locale.h>
 #include <math.h>
@@ -59,13 +59,13 @@ enum Direction_t {
  */
 struct Position_t{
   int x, y; /**< Координаты */
-} ;
+};
 
 /**
  * @brief Структура, представляющая тетромино, включая его позицию, тип и
  * варианты вращения.
  */
-struct Snake_t{
+struct Snake_t {
   std::deque<Position_t> points; /**< Координаты точек змейки */
   Direction_t direction; /**< Направление движения змейки (0-3) */
 };
@@ -201,4 +201,4 @@ class Snake {
 };
 
 
-#endif
+#endif //SNAKE_H
