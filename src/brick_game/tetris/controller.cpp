@@ -53,9 +53,8 @@ void GameLoop() {
   GameInfo_t game_info = tetris.updateCurrentState();
   tetris.GetRealTime();
   PrintTime(game_info.realtime);
-  int signal = 0;
-  struct timespec hold_start_time;
-  int hold_down = 0;
+  int signal = 0, hold_down = 0;
+  struct timespec hold_start_time, current_time;
   while (no_break) {
     game_info = tetris.updateCurrentState();
     int hold = 0;
@@ -65,18 +64,20 @@ void GameLoop() {
         clock_gettime(CLOCK_REALTIME, &hold_start_time);
         hold_down = 1;
       } else {
-        struct timespec current_time;
         clock_gettime(CLOCK_REALTIME, &current_time);
-        if (tetris.Offset(hold_start_time, current_time) >= 200) {
-          MVPRINTW(29, 30, "%s", "elaps yes, hold 1");
+        if (tetris.Offset(hold_start_time, current_time) >= 60) {
           hold = 1;
           hold_down = 0;
         }
       }
-    } 
+    }
     else hold_down = 0;
     userInput(GetSignal(signal), hold);
-
+    // Сброс hold при создании новой фигуры
+    if (game_info.state == SPAWN) {
+      flushinp();
+      hold_down = 0;  // Сбрасываем hold_down, чтобы новое тетрамино не двигалось сразу быстро вниз
+    }
     if(game_info.pause == 1) {
       PrintPause();
       int user_input = -1;
@@ -87,15 +88,12 @@ void GameLoop() {
       ClearPause();
       tetris.GameResume();
     }
-
     if (game_info.state != START) {
       UpdateView(game_info);
       PrintNextTetramino(game_info.next);
     }
-
-    MVPRINTW(30, 30, "%s %d", "hold", hold); 
     if (game_info.state == GAMEOVER) PrintGameOver (game_info);
     if (game_info.state == EXIT_STATE) no_break = FALSE;
-    napms(15);
+    napms(10);
   }
 }

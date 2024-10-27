@@ -25,7 +25,7 @@
 #define MAX_LVL 10
 #define BASE_DELAY 1000
 #define SCORE_FILE "brick_game/tetris/score.txt"
-#define INITIAL_TIMEOUT 50
+#define INITIAL_TIMEOUT 40
 
 #define NOSIG 8
 #define ESCAPE_KEY 27

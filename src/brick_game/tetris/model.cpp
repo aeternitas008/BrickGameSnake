@@ -32,7 +32,7 @@ void Tetris::GetPseudoRandomTypeTetramino() {
 
 void Tetris::StartGame() {
   clock_gettime(CLOCK_REALTIME, game_info_->time);
-  GetRealTime();
+  // GetRealTime();
   game_info_->state = SPAWN;
 }
 
@@ -308,14 +308,12 @@ void Tetris::MoveRight() {
   if (IsBlockRight()) {
     game_info_->tetramino->point->y += 1;
   }
-  Check();
 }
 
 void Tetris::MoveLeft() {
   if (IsBlockLeft()) {
     game_info_->tetramino->point->y -= 1;
   }
-  Check();
 }
 
 void Tetris::TurnRight() {
@@ -336,7 +334,6 @@ void Tetris::GameResume() {
 }
 
 void Tetris::GameOver() {
-  // PrintGameOver(game_info_);
   game_info_->state = EXIT_STATE;
 }
 
