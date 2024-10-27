@@ -6,6 +6,8 @@
 #include <wchar.h>
 #include "../../brick_game/tetris/model.hpp"
 
+#include "../../brick_game/snake/model.hpp"
+
 /**
  * @file frontend.h Файл имеет основные функции для отрисовки поля игры,
  * тетрамино и статистики
@@ -92,4 +94,7 @@ void PrintTime(int realtime[2]);
 void PrintNextTetramino(int figure[4][4]);
 
 void UpdateView(GameInfo_t game_info);
+
+void PrintSnake(Snake_t snake);
+
 #endif

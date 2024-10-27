@@ -1,6 +1,5 @@
 #include "view.hpp"
 
-
 void PrintOverlay(void) {
   start_color();
   init_pair(1, COLOR_CYAN, COLOR_BLACK);
@@ -147,4 +146,12 @@ void UpdateView(GameInfo_t game_info_) {
   PrintBoard(game_info_.field);
   PrintTetramino(*game_info_.tetramino);
   PrintTime(game_info_.realtime);
+}
+
+void PrintSnake(Snake_t snake) {
+  attron(COLOR_PAIR(2)); // need for apple and head snake?
+  for (...) {
+      MVPRINTW(3 + snake.points[x], 1 + snake.points->y * 3 + 2 ,
+                BLOCK);
+  }
 }
