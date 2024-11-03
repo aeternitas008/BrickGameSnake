@@ -4,6 +4,7 @@ void PrintOverlay(void) {
   start_color();
   init_pair(1, COLOR_CYAN, COLOR_BLACK);
   init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
   attron(COLOR_PAIR(1));
   PrintRectangle(0, BOARD_N - 1, 0, BOARD_M + 1);
   PrintRectangle(0, BOARD_N - 1, BOARD_M + 2, BOARD_M + HUD_WIDTH + 5);
@@ -95,19 +96,8 @@ void ClearPause() {
   MVPRINTW(2, 8, "              ");
 }
 
-void PrintTime(int realtime[2]) {
-  MVPRINTW(23, BOARD_M + 8, "%02d:%02d", realtime[0], realtime[1]);
-}
-
-// void ClearTetramino(Tetramino_t tetramino) {
-//   for (int x = 0; x < 4; x++) {
-//     for (int y = 0; y < 4; y++) {
-//       if (tetramino.figure[x][y]) {
-//         CLEAR_BACKPOS(3 + tetramino.point->x + x,
-//                       tetramino.point->y * 3 + 2 + y * 3);
-//       }
-//     }
-//   }
+// void PrintTime(int realtime[2]) {
+//   MVPRINTW(23, BOARD_M + 8, "%02d:%02d", realtime[0], realtime[1]);
 // }
 
 void PrintBoard(int field[ROWS_MAP][COLS_MAP]) {
@@ -152,10 +142,12 @@ void UpdateView(GameInfo_t game_info_) {
 void PrintSnake(Snake_t snake) {
   attron(COLOR_PAIR(2)); // need for apple and head snake?
   for (auto pos: snake.points ) {
-      MVPRINTW(3 + pos.x, 1 + pos.y * 3 + 2 , BLOCK);
+      MVPRINTW(3 + pos.x, 1 + pos.y * 3 + 1 , BLOCK);
   }
+   mvprintw(34,32, "print %d", snake.points[0].y);
 }
 
 void PrintApple(Position_t apple) {
-  MVPRINTW(3 + apple.x, 1 + apple.y * 3 + 2 , BLOCK);
+  attron(COLOR_PAIR(3)); // need for apple and head snake?
+  MVPRINTW(3 + apple.x, 1 + apple.y * 3 + 1 , BLOCK);
 }
