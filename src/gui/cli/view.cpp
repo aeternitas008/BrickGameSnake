@@ -14,7 +14,6 @@ void PrintOverlay(void) {
     PrintRectangle(i + (i - 1) * 3, i * 4 + a, BOARD_M + 3,
                    BOARD_M + HUD_WIDTH + 4);
   }
-  PrintRectangle(21, 24, BOARD_M + 3, BOARD_M + HUD_WIDTH + 4);
 
   MVPRINTW(2, BOARD_M + 5, "HIGH SCORE");
   MVPRINTW(3, BOARD_M + 8, "%05d", 0);
@@ -22,17 +21,14 @@ void PrintOverlay(void) {
   MVPRINTW(6, BOARD_M + 8, "SCORE");
   MVPRINTW(7, BOARD_M + 8, "%05d", 0);
 
-  MVPRINTW(10, BOARD_M + 8, "LEVEL");
-  MVPRINTW(11, BOARD_M + 11, "%02d", 1);
+  MVPRINTW(10, BOARD_M + 7, "LVL SPD");
+  MVPRINTW(11, BOARD_M + 8, "%02d  %02d", 1, 1);
 
   MVPRINTW(14, BOARD_M + 8, "NEXT");
   MVPRINTW(15, BOARD_M + 4, "[ ][ ][ ][ ]");
   MVPRINTW(16, BOARD_M + 4, "[ ][ ][ ][ ]");
   MVPRINTW(17, BOARD_M + 4, "[ ][ ][ ][ ]");
   MVPRINTW(18, BOARD_M + 4, "[ ][ ][ ][ ]");
-
-  MVPRINTW(22, BOARD_M + 8, "TIME");
-  MVPRINTW(23, BOARD_M + 8, "13:31");
 
   MVPRINTW(BOARD_N / 2, (BOARD_M - INTRO_MESSAGE_LEN) / 2 + 1, INTRO_MESSAGE);
 }
@@ -59,7 +55,7 @@ void PrintRectangle(int top_y, int bottom_y, int left_x, int right_x) {
 void PrintStats(GameInfo_t stats) {
   MVPRINTW(3, BOARD_M + 8, "%05d", stats.high_score);
   MVPRINTW(7, BOARD_M + 8, "%05d", stats.score);
-  MVPRINTW(11, BOARD_M + 11, "%02d", stats.level);
+  MVPRINTW(11, BOARD_M + 8, "%02d  %02d", stats.level, stats.speed);
 }
 
 void PrintField() {
@@ -67,18 +63,6 @@ void PrintField() {
     MVPRINTW(i, 1, "[ ][ ][ ][ ][ ][ ][ ][ ][ ][ ]");
     refresh();
     napms(30);
-  }
-}
-
-void PrintTetramino(Tetramino_t tetramino) {
-  attron(COLOR_PAIR(2));
-  for (int x = 0; x < 4; x++) {
-    for (int y = 0; y < 4; y++) {
-      if (tetramino.figure[x][y]) {
-        MVPRINTW(3 + tetramino.point->x + x, tetramino.point->y * 3 + 2 + y * 3,
-                 BLOCK);
-      }
-    }
   }
 }
 
@@ -93,21 +77,6 @@ void PrintPause() {
 void ClearPause() {
   MVPRINTW(1, 2, "                            ");
   MVPRINTW(2, 8, "              ");
-}
-
-void PrintTime(int realtime[2]) {
-  MVPRINTW(23, BOARD_M + 8, "%02d:%02d", realtime[0], realtime[1]);
-}
-
-void ClearTetramino(Tetramino_t tetramino) {
-  for (int x = 0; x < 4; x++) {
-    for (int y = 0; y < 4; y++) {
-      if (tetramino.figure[x][y]) {
-        CLEAR_BACKPOS(3 + tetramino.point->x + x,
-                      tetramino.point->y * 3 + 2 + y * 3);
-      }
-    }
-  }
 }
 
 void PrintBoard(int field[ROWS_MAP][COLS_MAP]) {
@@ -144,14 +113,4 @@ void PrintNextTetramino(int figure[4][4]) {
 void UpdateView(GameInfo_t game_info_) {
   PrintStats(game_info_);
   PrintBoard(game_info_.field);
-  PrintTetramino(*game_info_.tetramino);
-  PrintTime(game_info_.realtime);
-}
-
-void PrintSnake(Snake_t snake) {
-  attron(COLOR_PAIR(2)); // need for apple and head snake?
-  for (...) {
-      MVPRINTW(3 + snake.points[x], 1 + snake.points->y * 3 + 2 ,
-                BLOCK);
-  }
 }

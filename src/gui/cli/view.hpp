@@ -6,7 +6,6 @@
 #include <wchar.h>
 #include "../../brick_game/tetris/model.hpp"
 
-#include "../../brick_game/snake/model.hpp"
 
 /**
  * @file frontend.h Файл имеет основные функции для отрисовки поля игры,
@@ -65,22 +64,6 @@ void PrintBoard(int field[ROWS_MAP][COLS_MAP]);
 void PrintGameOver(GameInfo_t stats);
 
 /**
- * @brief Отображает текущее тетромино на игровом поле.
- *
- * @param tetramino Текущая фигура тетромино (Tetramino_t), которая будет
- * отображена на экране.
- */
-void PrintTetramino(Tetramino_t tetramino);
-
-/**
- * @brief Очищает текущее тетромино с экрана.
- *
- * @param tetramino Текущая фигура тетромино (Tetramino_t), которая будет
- * очищена.
- */
-void ClearTetramino(Tetramino_t tetramino);
-
-/**
  * @brief Отображает сообщение о паузе.
  */
 void PrintPause();
@@ -95,6 +78,29 @@ void PrintNextTetramino(int figure[4][4]);
 
 void UpdateView(GameInfo_t game_info);
 
-void PrintSnake(Snake_t snake);
+// /**
+//  * @brief Перечисление направлений движения змейки.
+//  */
+// enum Direction_t {
+//   UP_DIRECTION = 0, /**< Начало игры */
+//   RIGHT_DIRECTION,    /**< Фигура движется */
+//   DOWN_DIRECTION,  /**< Сдвиг или поворот фигуры */
+//   LEFT_DIRECTION,     /**< Появление новой фигуры */
+// };
+
+// /**
+//  * @brief Структура, представляющая координаты на игровом поле.
+//  */
+// struct Position_t{
+//   int x, y; /**< Координаты */
+// };
+
+// struct Snake_t {
+//   std::deque<Position_t> points; /**< Координаты точек змейки */
+//   Direction_t direction; /**< Направление движения змейки (0-3) */
+// };
+
+// void PrintSnake(Snake_t snake);
+
 
 #endif

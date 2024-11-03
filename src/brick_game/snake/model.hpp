@@ -81,7 +81,9 @@ struct GameInfo_t {
   int level;      /**< Текущий уровень */
   int speed;      /**< Скорость падения фигур */
   int pause;      /**< Состояние паузы */
-  int realtime[2]; /**< Текущее время */
+};
+
+struct SnakeInfo_t {
   struct timespec *time; /**< Указатель на структуру времени */
   Snake_t *snake; /**< Указатель на змейку */
   Position_t *apple; /**< Указатель на позицию яблока */
@@ -91,31 +93,37 @@ struct GameInfo_t {
 class Snake {
   private:
   static inline GameInfo_t* game_info_;
+  static inline SnakeInfo_t* snake_info_;
 
-  void GetRandomCoordiantes();
   void NewStatsSaveInit();
-
   void StatsInit();
   void SnakePosInit();
-  void InitBoard(int field[ROWS_MAP][COLS_MAP]);
-  int IsCollision(Position_t *new_point);
+  void GetRandomCoordiantes();
+  void InitBoard();
+  int IsCollision(Position_t point);
   int IsEating(Position_t new_point);
+
+  int IsBodySnake(Position_t point);
 
   public:
 
   Snake() {
     if (!game_info_) {
       game_info_ = new GameInfo_t;
-      game_info_->time = new timespec;      // Инициализация указателя
-      clock_gettime(CLOCK_REALTIME, game_info_->time);
-      game_info_->snake = new Snake_t;
+      snake_info_ = new SnakeInfo_t;
+      snake_info_->time = new timespec;      // Инициализация указателя
+      // clock_gettime(CLOCK_REALTIME, game_info_->time);
+      snake_info_->snake = new Snake_t;
+      snake_info_->apple = new Position_t;
+      snake_info_->snake->direction = LEFT_DIRECTION;
       // game_info_->snake->points = new std::deque<Position_t>;
       game_info_->pause = 0;
     // Инициализируем статический указатель, если он ещё не инициализирован
-      game_info_->state = START;
-      InitBoard(game_info_->field);
-      StatsInit();
+      snake_info_->state = START;
+      InitBoard();
+      SnakePosInit();
       GetRandomCoordiantes();
+      StatsInit();
     }
   }
 
@@ -143,7 +151,7 @@ class Snake {
     // }
 
   State_t GetState() {
-      return game_info_->state; 
+      return snake_info_->state; 
   }
   /**
    * @brief Возвращает указатель на статический экземпляр структуры GameInfo_t.
@@ -156,6 +164,10 @@ class Snake {
    */
   static GameInfo_t updateCurrentState() {
     return *game_info_;
+  }
+
+  static SnakeInfo_t GetSnakeInfo() {
+    return *snake_info_;
   }
 
   void StartGame();
@@ -193,11 +205,8 @@ class Snake {
   void Check();
   void GamePause();
   void GameResume();
-
-  void GetRealTime();
   int Offset(struct timespec last_time, struct timespec current_time);
 
-  int IsBodySnake(Position_t point);
 };
 
 

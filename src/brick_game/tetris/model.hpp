@@ -8,10 +8,7 @@
 #include <time.h>
 #include <array>
 
-// #include <sys/time.h>
-// #include <stdlib.h>
-
-#include "defines.hpp"
+#include "../defines.hpp"
 
 /**
  * @file main.h Файл имеет основные функции по реализации игры, а именно
@@ -20,39 +17,6 @@
  *
  */
 
-/**
- * @brief Перечисление действий пользователя.
- */
-enum UserAction_t {
-  Start = 0,     /**< Начать игру */
-  Pause,     /**< Поставить игру на паузу */
-  Terminate, /**< Завершить игру */
-  Left,      /**< Движение влево */
-  Right,     /**< Движение вправо */
-  Up,        /**< Движение вверх или поворот */
-  Down,      /**< Движение вниз */
-  Action,     /**< Выполнение действия */
-  Nosig
-};
-
-/**
- * @brief Перечисление состояний игры.
- */
-enum State_t {
-  START = 0, /**< Начало игры */
-  SPAWN,     /**< Появление новой фигуры */
-  MOVING,    /**< Фигура движется */
-  SHIFTING,  /**< Сдвиг или поворот фигуры */
-  GAMEOVER,  /**< Конец игры */
-  EXIT_STATE /**< Выход из игры */
-};
-
-/**
- * @brief Структура, представляющая координаты на игровом поле.
- */
-struct Position{
-  int x, y; /**< Координаты */
-} ;
 
 /**
  * @brief Структура, представляющая тетромино, включая его позицию, тип и
@@ -68,21 +32,14 @@ struct Tetramino_t{
 };
 
 /**
- * @brief Структура, содержащая информацию об игре.
+ * @brief Структура, представляющая тетромино, включая его позицию, тип и
+ * варианты вращения.
  */
-struct GameInfo_t {
-  int field[ROWS_MAP][COLS_MAP]; /**< Двумерный массив игрового поля */
-  int next[4][4]; /**< Двумерный массив для отображения следующего тетромино */
-  int score;  /**< Текущий счет игрока */
-  int high_score; /**< Максимальный достигнутый счет */
-  int level;      /**< Текущий уровень */
-  int speed;      /**< Скорость падения фигур */
-  int pause;      /**< Состояние паузы */
-  int realtime[2]; /**< Текущее время */
-  int hold; /**< Флаг удержания текущего тетромино */
-  struct timespec *time; /**< Указатель на структуру времени */
-  Tetramino_t *tetramino; /**< Указатель на текущее тетромино */
-  State_t state; /**< Текущее состояние игры */
+struct Tetris_t{
+  Tetramino_t tetramino;
+  struct timespec *time;
+  State_t state;
+  int hold;
 };
 
 static const unsigned int TETRAMINO_FIGURES[19][4][4] = {
@@ -116,6 +73,7 @@ static const unsigned int TETRAMINO_FIGURES[19][4][4] = {
 class Tetris {
   private:
   static inline GameInfo_t* game_info_;
+  static inline Tetris_t* tetris_;
 
   void AddTypeTetramino(int tetramino);
   bool isUnique(int tetramino, const std::array<int, 4>& last_tetraminos);
@@ -137,8 +95,6 @@ class Tetris {
   int CheckNewVariant();
   int CheckTetramino(Tetramino_t tetramino);
 
-
-
   /**
    * @brief Заполняет текущую фигуру тетрамино на основе его типа и варианта.
    *
@@ -151,22 +107,19 @@ class Tetris {
   void GetFigure(Tetramino_t *tetramino);
 
   public:
-
   Tetris() {
+    // Инициализируем статический указатель, если он ещё не инициализирован
     if (!game_info_) {
       game_info_ = new GameInfo_t;
-      game_info_->time = new timespec;      // Инициализация указателя
-      clock_gettime(CLOCK_REALTIME, game_info_->time);
-      game_info_->tetramino = new Tetramino_t;
-      game_info_->tetramino->point = new Position;
+      tetris_ = new Tetris_t;
+      tetris_->time = new timespec;
       game_info_->pause = 0;
-    // Инициализируем статический указатель, если он ещё не инициализирован
-      game_info_->state = START;
+      tetris_->state = START;
       InitBoard(game_info_->field);
       StatsInit();
-      game_info_->tetramino->last_tetramino = {-1, -1, -1, -1};
+      tetris_->tetramino.last_tetramino = {-1, -1, -1, -1};
       GetPseudoRandomTypeTetramino();
-      game_info_->tetramino->variant = 0;
+      tetris_->tetramino.variant = 0;
     }
   }
 
@@ -188,13 +141,11 @@ class Tetris {
   //   }
   // }
 
-  // Пример функции, изменяющей состояние игры
-    // void UpdateState(State_t new_state) {
-    //     game_info_.state = new_state; // Меняем состояние через статическую переменную
-    // }
-
   State_t GetState() {
-      return game_info_->state; 
+      return tetris_->state; 
+  }
+  Tetramino_t GetTetramino() {
+      return tetris_->tetramino; 
   }
   /**
    * @brief Возвращает указатель на статический экземпляр структуры GameInfo_t.
@@ -245,13 +196,11 @@ class Tetris {
   void GamePause();
   void GameResume();
 
-  void GetRealTime();
   int Offset(struct timespec last_time, struct timespec current_time);
 
   void SetHold(int x) {
-    game_info_->hold = x;
+    tetris_->hold = x;
   }
 };
-
 
 #endif

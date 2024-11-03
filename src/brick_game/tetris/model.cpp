@@ -12,7 +12,7 @@ bool Tetris::isUnique(int tetramino, const std::array<int, 4>& last_tetraminos) 
 
 // Функция для добавления нового тетрамино в массив
 void Tetris::AddTypeTetramino(int tetramino) {
-std::array<int, 4>& last_tetraminos = game_info_->tetramino->last_tetramino;
+std::array<int, 4>& last_tetraminos = tetris_->tetramino.last_tetramino;
   for (int i = 1; i < last_tetraminos.size(); i++) {
       last_tetraminos[i - 1] = last_tetraminos[i];
   }
@@ -22,18 +22,16 @@ std::array<int, 4>& last_tetraminos = game_info_->tetramino->last_tetramino;
 void Tetris::GetPseudoRandomTypeTetramino() {
   srand(time(0));
   int tetramino = rand() % 7;
-  while (!isUnique(tetramino, game_info_->tetramino->last_tetramino)) {
+  while (!isUnique(tetramino, tetris_->tetramino.last_tetramino)) {
     tetramino = rand() % 7;
   }
   AddTypeTetramino(tetramino);
-  game_info_->tetramino->next_type = tetramino;
+  tetris_->tetramino.next_type = tetramino;
 }
 
 
 void Tetris::StartGame() {
-  clock_gettime(CLOCK_REALTIME, game_info_->time);
-  // GetRealTime();
-  game_info_->state = SPAWN;
+  tetris_->state = SPAWN;
 }
 
 void Tetris::GetFigure(Tetramino_t *tetramino) {
@@ -51,8 +49,8 @@ void Tetris::GetFigure(Tetramino_t *tetramino) {
 }
 
 int Tetris::CheckNewVariant() {
-  Tetramino_t tetramino_test = *game_info_->tetramino;
-  tetramino_test.variant = (tetramino_test.variant + 1) % 4;
+  Tetramino_t tetramino_test = tetris_->tetramino;
+ tetramino_test.variant = (tetramino_test.variant + 1) % 4;
   GetFigure(&tetramino_test);
   return CheckTetramino(tetramino_test);
 }
@@ -84,18 +82,17 @@ void Tetris::InitBoard(int field[ROWS_MAP][COLS_MAP]) {
 void Tetris::AddTetraminoOnBoard() {
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
-      if (game_info_->tetramino->figure[x][y] == 1) {
-        game_info_->field[game_info_->tetramino->point->x + x]
-                        [game_info_->tetramino->point->y + y] = 1;
+      if (tetris_->tetramino.figure[x][y] == 1) {
+        game_info_->field[tetris_->tetramino.point->x + x]
+                        [tetris_->tetramino.point->y + y] = 1;
       }
     }
   }
 }
 
-
 void Tetris::TetraminoPosInit() {
-  game_info_->tetramino->point->x = TETRSTART_X;
-  game_info_->tetramino->point->y = TETRSTART_Y;
+  tetris_->tetramino.point->x = TETR_START_X;
+  tetris_->tetramino.point->y = TETR_START_Y;
 }
 
 void Tetris::StatsInit() {
@@ -126,27 +123,20 @@ int Tetris::Offset(struct timespec last_time, struct timespec current_time) {
   return total_offset;
 }
 
-void Tetris::GetRealTime() {
-  int hours = ((long int)game_info_->time->tv_sec / 3600) % 24 + 3;
-  int minutes = (long int)game_info_->time->tv_sec % 3600 / 60;
-  game_info_->realtime[0] = hours;
-  game_info_->realtime[1] = minutes;
-}
-
 void Tetris::Shifting() {
   struct timespec current_time;
   clock_gettime(CLOCK_REALTIME, &current_time);
 
   // difficult level
   int delay = BASE_DELAY * pow(0.8, game_info_->level - 1);
-  if (Offset(*game_info_->time, current_time) >= delay) {
+  if (Offset(*tetris_->time, current_time) >= delay) {
     MoveDown();
-    game_info_->time->tv_sec = current_time.tv_sec;
-    game_info_->time->tv_nsec = current_time.tv_nsec;
+    tetris_->time->tv_sec = current_time.tv_sec;
+    tetris_->time->tv_nsec = current_time.tv_nsec;
   }
-
-  if (game_info_->state != SPAWN) {
-    game_info_->state = MOVING;
+  napms(20);
+  if (tetris_->state != SPAWN) {
+    tetris_->state = MOVING;
   }
 }
 
@@ -195,10 +185,12 @@ void Tetris::Check() {
   if (count == 4) game_info_->score += 1500;
   if (game_info_->level < MAX_LVL)
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL + 1;
+    game_info_->speed = game_info_->level;
   NewStatsSaveInit();
-  if (game_info_->state != SPAWN) {
-    game_info_->state = SHIFTING;
-  }
+  // delete?
+  // if (tetris_->state != SPAWN) {
+  //   tetris_->state = SHIFTING;
+  // }
 }
 
 bool Tetris::CheckFirstLine() {
@@ -212,14 +204,13 @@ bool Tetris::CheckFirstLine() {
 }
 
 void Tetris::Spawn() {
-  game_info_->tetramino->variant = 0;
-  game_info_->tetramino->type = game_info_->tetramino->next_type;
+  tetris_->tetramino.variant = 0;
+  tetris_->tetramino.type = tetris_->tetramino.next_type;
   TetraminoPosInit();
-  GetFigure(game_info_->tetramino);
-
+  GetFigure(&tetris_->tetramino);
   GetPseudoRandomTypeTetramino();
-  Tetramino_t next_tetramino = *game_info_->tetramino;
-  next_tetramino.type = game_info_->tetramino->next_type;
+  Tetramino_t next_tetramino = tetris_->tetramino;
+  next_tetramino.type = tetris_->tetramino.next_type;
   GetFigure(&next_tetramino);
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -227,15 +218,15 @@ void Tetris::Spawn() {
     }
   }
 
-  if (CheckTetramino(*game_info_->tetramino) == 1 || CheckFirstLine()) {
-    game_info_->state = GAMEOVER;
+  if (CheckTetramino(tetris_->tetramino) || CheckFirstLine()) {
+    tetris_->state = GAMEOVER;
   } else {
-    game_info_->state = MOVING;
+    tetris_->state = SHIFTING;
   }
 }
 
 void Tetris::MoveUp() {
-  game_info_->hold = game_info_->hold;
+  tetris_->hold = tetris_->hold;
   // stub
 }
 
@@ -243,12 +234,12 @@ bool Tetris::IsNotBlockBelow() {
   bool result = 1;
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
-      if (game_info_->tetramino->figure[x][y] == 1 &&
-          (game_info_->tetramino->point->x + x >= 19)) {
+      if (tetris_->tetramino.figure[x][y] == 1 &&
+          (tetris_->tetramino.point->x + x >= 19)) {
         result = 0;
-      } else if (game_info_->tetramino->figure[x][y] == 1 &&
-                 game_info_->field[game_info_->tetramino->point->x + x + 1]
-                                 [game_info_->tetramino->point->y + y] == 1)
+      } else if (tetris_->tetramino.figure[x][y] == 1 &&
+                 game_info_->field[tetris_->tetramino.point->x + x + 1]
+                                 [tetris_->tetramino.point->y + y] == 1)
         result = 0;
     }
   }
@@ -259,10 +250,10 @@ bool Tetris::IsBlockRight() {
   bool result = 1;
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
-      if (game_info_->tetramino->figure[x][y] == 1 &&
-          (game_info_->tetramino->point->y + y >= 9 ||
-           game_info_->field[game_info_->tetramino->point->x + x]
-                           [game_info_->tetramino->point->y + y + 1] == 1)) {
+      if (tetris_->tetramino.figure[x][y] == 1 &&
+          (tetris_->tetramino.point->y + y >= 9 ||
+           game_info_->field[tetris_->tetramino.point->x + x]
+                           [tetris_->tetramino.point->y + y + 1] == 1)) {
         result = 0;
       }
     }
@@ -274,10 +265,10 @@ bool Tetris::IsBlockLeft() {
   bool result = 1;
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
-      if (game_info_->tetramino->figure[x][y] == 1 &&
-          (game_info_->tetramino->point->y + y <= 0 ||
-           game_info_->field[game_info_->tetramino->point->x + x]
-                           [game_info_->tetramino->point->y + y - 1] == 1)) {
+      if (tetris_->tetramino.figure[x][y] == 1 &&
+          (tetris_->tetramino.point->y + y <= 0 ||
+           game_info_->field[tetris_->tetramino.point->x + x]
+                           [tetris_->tetramino.point->y + y - 1] == 1)) {
         result = 0;
       }
     }
@@ -286,42 +277,42 @@ bool Tetris::IsBlockLeft() {
 }
 
 void Tetris::MoveDown() {
-  MVPRINTW(31, 30, "%s %.4lf", "game hold", game_info_->hold);
   if (IsNotBlockBelow()) {
     do {
-      game_info_->tetramino->point->x += 1;
-    } while (game_info_->hold && IsNotBlockBelow());
-    if (game_info_->hold) {
-      MVPRINTW(32, 30, "%s %.4lf", "i am here", game_info_->hold);
+      tetris_->tetramino.point->x += 1;
+    } while (tetris_->hold && IsNotBlockBelow());
+    if (tetris_->hold) {
       AddTetraminoOnBoard();
-      game_info_->state = SPAWN;
-      game_info_->hold = 0;
+      tetris_->state = SPAWN;
+      tetris_->hold = 0;
     }
   } else {
     AddTetraminoOnBoard();
-    game_info_->state = SPAWN;
+    tetris_->state = SPAWN;
   }
   Check();
 }
 
 void Tetris::MoveRight() {
   if (IsBlockRight()) {
-    game_info_->tetramino->point->y += 1;
+    tetris_->tetramino.point->y += 1;
   }
+  tetris_->state = SHIFTING;
 }
 
 void Tetris::MoveLeft() {
   if (IsBlockLeft()) {
-    game_info_->tetramino->point->y -= 1;
+    tetris_->tetramino.point->y -= 1;
   }
+  tetris_->state = SHIFTING;
 }
 
 void Tetris::TurnRight() {
   if (CheckNewVariant() == 0) {
-    game_info_->tetramino->variant = (game_info_->tetramino->variant + 1) % 4;
-    GetFigure(game_info_->tetramino);
+    tetris_->tetramino.variant = (tetris_->tetramino.variant + 1) % 4;
+    GetFigure(&tetris_->tetramino);
   }
-  game_info_->state = MOVING;
+  tetris_->state = SHIFTING;
 }
 
 void Tetris::GamePause() {
@@ -330,11 +321,11 @@ void Tetris::GamePause() {
 
 void Tetris::GameResume() {
   game_info_->pause = 0;
-  game_info_->state = MOVING;
+  tetris_->state = MOVING;
 }
 
 void Tetris::GameOver() {
-  game_info_->state = EXIT_STATE;
+  tetris_->state = EXIT_STATE;
 }
 
-void Tetris::ExitState() { game_info_->state = EXIT_STATE; }
+void Tetris::ExitState() { tetris_->state = EXIT_STATE; }

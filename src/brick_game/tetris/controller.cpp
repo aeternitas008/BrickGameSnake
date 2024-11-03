@@ -25,60 +25,29 @@ typedef void (Tetris::*action)();
 
 void userInput(UserAction_t signal, bool hold) {
   Tetris tetris;
+  State_t state = tetris.GetState();
   GameInfo_t game_info = tetris.updateCurrentState();
-  if (hold) tetris.SetHold(hold);
-  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, &Tetris::Shifting, &Tetris::GameOver, &Tetris::ExitState};
-
+  tetris.SetHold(hold);
+  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, nullptr, &Tetris::GameOver, &Tetris::ExitState};
   action fsm_table[2][9] = {
       {&Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-      {&Tetris::Check, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check},
+      {nullptr, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check},
   };
   action act;
-  if (game_info.state != MOVING && game_info.state != START) {
-    act = fsm_simple[game_info.state];
+  if (state != MOVING && state != START) {
+    act = fsm_simple[state];
   } else  {
-    int state = START;
-    if (game_info.state == START && signal == Start) PrintField();
-    if (game_info.state == MOVING) state = 1;
-    act = fsm_table[state][signal];
+    int i = state;
+    if (state == START && signal == Start) PrintField();
+    if (state == MOVING) i = 1;
+    act = fsm_table[i][signal];
   }
   if (act) {
     (tetris.*act)();
   }
 }
 
-void GameLoop() {
-  bool no_break = TRUE;
-  Tetris tetris;
-  GameInfo_t game_info = tetris.updateCurrentState();
-  tetris.GetRealTime();
-  PrintTime(game_info.realtime);
-  int signal = 0, hold_down = 0;
-  struct timespec hold_start_time, current_time;
-  while (no_break) {
-    game_info = tetris.updateCurrentState();
-    int hold = 0;
-    if (game_info.state == MOVING || game_info.state == START) signal = GET_USER_INPUT;
-    if (signal == KEY_DOWN) {
-      if (hold_down == 0) {
-        clock_gettime(CLOCK_REALTIME, &hold_start_time);
-        hold_down = 1;
-      } else {
-        clock_gettime(CLOCK_REALTIME, &current_time);
-        if (tetris.Offset(hold_start_time, current_time) >= 60) {
-          hold = 1;
-          hold_down = 0;
-        }
-      }
-    }
-    else hold_down = 0;
-    userInput(GetSignal(signal), hold);
-    // Сброс hold при создании новой фигуры
-    if (game_info.state == SPAWN) {
-      flushinp();
-      hold_down = 0;  // Сбрасываем hold_down, чтобы новое тетрамино не двигалось сразу быстро вниз
-    }
-    if(game_info.pause == 1) {
+void PauseGame(Tetris tetris, GameInfo_t game_info) {
       PrintPause();
       int user_input = -1;
       while (user_input != ESCAPE_KEY && user_input != P_KEY &&
@@ -87,13 +56,49 @@ void GameLoop() {
       }
       ClearPause();
       tetris.GameResume();
+}
+
+void BoardPlusTetramino(GameInfo_t *game_info, Tetramino_t tetramino) {
+  for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 4; y++) {
+      if (tetramino.figure[x][y] == 1) {
+        game_info->field[tetramino.point->x + x]
+                        [tetramino.point->y + y] = 1;
+      }
     }
-    if (game_info.state != START) {
+  }
+}
+
+void GameLoop() {
+  bool no_break = TRUE;
+  Tetris tetris;
+  GameInfo_t game_info;
+  // Tetris_t tetris_info;
+  Tetramino_t tetramino;
+  State_t state;
+  int signal = 0;
+  while (no_break) {
+    game_info = tetris.updateCurrentState();
+    tetramino = tetris.GetTetramino();
+    state = tetris.GetState();
+    mvprintw(30,5, "%d", state);
+    int hold = 0;
+    if (state == MOVING || state == START) signal = GET_USER_INPUT;
+    if (signal == KEY_DOWN) {
+      hold = 1;
+    }
+    userInput(GetSignal(signal), hold);
+    if(game_info.pause == 1) {
+      PauseGame(tetris, game_info);
+    }
+    if (state != START) {
+      tetris.Shifting();
+      // BoardPlusTetramino(&game_info, tetramino);
       UpdateView(game_info);
       PrintNextTetramino(game_info.next);
     }
-    if (game_info.state == GAMEOVER) PrintGameOver (game_info);
-    if (game_info.state == EXIT_STATE) no_break = FALSE;
+    if (state == GAMEOVER) PrintGameOver(game_info);
+    if (state == EXIT_STATE) no_break = FALSE;
     napms(10);
   }
 }
