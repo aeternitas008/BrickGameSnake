@@ -80,11 +80,6 @@ void GameLoop() {
   while (no_break) {
     game_info = snake.updateCurrentState();
     snake_info = snake.GetSnakeInfo();
-      // mvprintw(36,32, "%d %d", snake_info.apple->x, snake_info.apple->y);
-      // mvprintw(37,32, "%d %d\n" , snake_info.snake->points[0].x, snake_info.snake->points[0].y);
-      // mvprintw(38,32, "%d %d\n" , snake_info.snake->points[1].x, snake_info.snake->points[1].y);
-      // mvprintw(39,32, "%d %d\n" , snake_info.snake->points[2].x, snake_info.snake->points[2].y);
-      // mvprintw(40,32, "%d %d\n" , snake_info.snake->points[3].x, snake_info.snake->points[3].y);
     if (snake_info.state == MOVING || snake_info.state == START) signal = GET_USER_INPUT;
  
     userInput(GetSignal(signal), hold);
@@ -97,6 +92,8 @@ void GameLoop() {
       UpdateView(game_info);
     }
     if (snake_info.state == GAMEOVER) PrintGameOver(game_info);
+    // либо засунуть в такие моменты в параметр паузы 2, 3 геймовер и победа либо... просто добавить отдельную функцию и вызывать также и в qt
+    // if (snake_info.pause == 1) PrintWin(game_info);
     if (snake_info.state == EXIT_STATE) no_break = FALSE;
   }
 }

@@ -42,7 +42,7 @@
 #define BOARDS_BEGIN 2
 #define SNAKE_START_X (10)
 #define SNAKE_START_Y (5)
-#define TETR_START_X (-1)
+#define TETR_START_X (0)
 #define TETR_START_Y (3)
 #define INTRO_MESSAGE_LEN 21
 #define BOARD_N (ROWS_MAP + MAP_PADDING * 2)
@@ -50,7 +50,8 @@
 #define HUD_WIDTH 12
 #define MAP_PADDING 3
 #define INTRO_MESSAGE "Press ENTER to Start!"
-#define BLOCK "■"
+#define BLOCK1 "■"
+#define BLOCK "#"
 
 #define SUCCESS 0
 
