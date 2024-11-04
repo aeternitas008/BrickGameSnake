@@ -29,7 +29,6 @@ void userInput(UserAction_t signal, bool hold) {
   SnakeInfo_t snake_info = snake.GetSnakeInfo();
 
   action fsm_simple[6] = { nullptr, &Snake::Spawn, nullptr, &Snake::Shifting, &Snake::GameOver, &Snake::ExitState};
-
   action fsm_table[2][9] = {
       {&Snake::StartGame, nullptr, &Snake::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
       {&Snake::Check, &Snake::GamePause, &Snake::ExitState, &Snake::MoveLeft, &Snake::MoveRight, &Snake::MoveUp, &Snake::MoveDown, nullptr, &Snake::Check},
@@ -50,15 +49,15 @@ void userInput(UserAction_t signal, bool hold) {
 
 void SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info) {
   int x, y;
-  for (int i = 0; i++; i < snake_info.snake->points.size()) {
+  for (int i = 0; i < snake_info.snake->points.size();i++) {
     x = snake_info.snake->points[i].x;
     y = snake_info.snake->points[i].y;
     game_info->field[x][y] = 1;
   }
   x = snake_info.apple->x;
   y = snake_info.apple->y;
-  // для отображения другим цветом можно заполнять другими цифрами и отображать на основе цифры)
-  game_info->field[x][y] = 1;
+  // для отображения другим цветом
+  game_info->field[x][y] = 2;
 }
 
 void PauseGame(Snake Snake, GameInfo_t game_info) {
@@ -77,17 +76,15 @@ void GameLoop() {
   Snake snake;
   GameInfo_t game_info;
   SnakeInfo_t snake_info;
-  int signal = 0, hold_down = 0;
+  int signal = 0, hold = 0;
   while (no_break) {
     game_info = snake.updateCurrentState();
     snake_info = snake.GetSnakeInfo();
-
-      mvprintw(36,32, "%d %d", snake_info.apple->x, snake_info.apple->y);
-      mvprintw(37,32, "%d %d\n" , snake_info.snake->points[0].x, snake_info.snake->points[0].y);
-      mvprintw(38,32, "%d %d\n" , snake_info.snake->points[1].x, snake_info.snake->points[1].y);
-      mvprintw(39,32, "%d %d\n" , snake_info.snake->points[2].x, snake_info.snake->points[2].y);
-      mvprintw(40,32, "%d %d\n" , snake_info.snake->points[3].x, snake_info.snake->points[3].y);
-    int hold = 0;
+      // mvprintw(36,32, "%d %d", snake_info.apple->x, snake_info.apple->y);
+      // mvprintw(37,32, "%d %d\n" , snake_info.snake->points[0].x, snake_info.snake->points[0].y);
+      // mvprintw(38,32, "%d %d\n" , snake_info.snake->points[1].x, snake_info.snake->points[1].y);
+      // mvprintw(39,32, "%d %d\n" , snake_info.snake->points[2].x, snake_info.snake->points[2].y);
+      // mvprintw(40,32, "%d %d\n" , snake_info.snake->points[3].x, snake_info.snake->points[3].y);
     if (snake_info.state == MOVING || snake_info.state == START) signal = GET_USER_INPUT;
  
     userInput(GetSignal(signal), hold);
@@ -98,11 +95,8 @@ void GameLoop() {
     if (snake_info.state != START) {
       SumSnake(&game_info, snake_info);
       UpdateView(game_info);
-      // PrintNextTetramino(game_info.next);
     }
     if (snake_info.state == GAMEOVER) PrintGameOver(game_info);
     if (snake_info.state == EXIT_STATE) no_break = FALSE;
-    MVPRINTW(29, 30, "yes circle %d, %d", snake_info.state, game_info.high_score);
-    napms(10);
   }
 }

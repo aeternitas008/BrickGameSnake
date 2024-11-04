@@ -118,6 +118,7 @@ void Snake::NewStatsSaveInit() {
 void Snake::Check() {
   if (game_info_->level < MAX_LVL)
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL + 1;
+    game_info_->speed = game_info_->level;
     NewStatsSaveInit();
   if (snake_info_->state != SPAWN) {
     snake_info_->state = SHIFTING;
