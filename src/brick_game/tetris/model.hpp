@@ -35,7 +35,7 @@ struct Tetramino_t{
  * варианты вращения.
  */
 struct Tetris_t{
-  Tetramino_t tetramino;
+  Tetramino_t *tetramino;
   struct timespec *time;
   State_t state;
   int hold;
@@ -111,14 +111,16 @@ class Tetris {
     if (!game_info_) {
       game_info_ = new GameInfo_t;
       tetris_ = new Tetris_t;
+      tetris_->tetramino = new Tetramino_t;
+      tetris_->tetramino->point = new Position_t;
       tetris_->time = new timespec;
       game_info_->pause = 0;
       tetris_->state = START;
       InitBoard(game_info_->field);
       StatsInit();
-      tetris_->tetramino.last_tetramino = {-1, -1, -1, -1};
+      tetris_->tetramino->last_tetramino = {-1, -1, -1, -1};
       GetPseudoRandomTypeTetramino();
-      tetris_->tetramino.variant = 0;
+      tetris_->tetramino->variant = 0;
     }
   }
 
@@ -143,8 +145,11 @@ class Tetris {
   State_t GetState() {
       return tetris_->state; 
   }
+  Tetris_t GetTetrisInfo() {
+      return *tetris_; 
+  }
   Tetramino_t GetTetramino() {
-      return tetris_->tetramino; 
+      return *tetris_->tetramino; 
   }
   /**
    * @brief Возвращает указатель на статический экземпляр структуры GameInfo_t.
