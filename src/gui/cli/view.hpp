@@ -4,8 +4,9 @@
 #include <locale.h>
 #include <unistd.h>
 #include <wchar.h>
-#include "../../brick_game/tetris/model.hpp"
-
+#include "../../brick_game/defines.hpp"
+#include <ncurses.h>
+#include <cstdio>
 
 /**
  * @file frontend.h Файл имеет основные функции для отрисовки поля игры,

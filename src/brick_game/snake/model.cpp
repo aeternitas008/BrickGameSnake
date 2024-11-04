@@ -24,7 +24,6 @@ void Snake::GetRandomCoordiantes() {
 
 void Snake::StartGame() {
   clock_gettime(CLOCK_REALTIME, snake_info_->time);
-  // GetRealTime();
   snake_info_->state = SPAWN;
 }
 
@@ -65,14 +64,14 @@ void Snake::SnakePosInit() {
 void Snake::StatsInit() {
   int N = 256;
   char buffer[N];
-  FILE *fp = fopen(SCORE_FILE, "r");
+  FILE *fp = fopen(SCORE_FILE_SNK, "r");
   if (fp != NULL) {
     fgets(buffer, N, fp);
     char *score = strchr(buffer, ':');
     game_info_->high_score = atoi(++score);
     fclose(fp);
   } else {
-    FILE *file = fopen(SCORE_FILE, "w");
+    FILE *file = fopen(SCORE_FILE_SNK, "w");
     fprintf(file, "score:0");
     fclose(file);
     game_info_->high_score = 0;
@@ -109,7 +108,7 @@ void Snake::Shifting() {
 void Snake::NewStatsSaveInit() {
   if (game_info_->score > game_info_->high_score) {
     game_info_->high_score = game_info_->score;
-    FILE *file = fopen(SCORE_FILE, "w");
+    FILE *file = fopen(SCORE_FILE_SNK, "w");
     fprintf(file, "score:%d", game_info_->score);
     fclose(file);
   }
@@ -117,7 +116,7 @@ void Snake::NewStatsSaveInit() {
 
 void Snake::Check() {
   if (game_info_->level < MAX_LVL)
-    game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL + 1;
+    game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_SNK + 1;
     game_info_->speed = game_info_->level;
     NewStatsSaveInit();
   if (snake_info_->state != SPAWN) {
@@ -131,20 +130,19 @@ void Snake::Spawn() {
 }
 
 void Snake::MoveUp() {
-  // std::deque<Position_t> points = snake_info_->snake->points;
-  if (snake_info_->snake->points.front().x - 1 != snake_info_->snake->points[1].x && snake_info_->snake->points.front().y != snake_info_->snake->points[1].y) snake_info_->snake->direction = UP_DIRECTION;
+  if (snake_info_->snake->points.front().x - 1 != snake_info_->snake->points[1].x) snake_info_->snake->direction = UP_DIRECTION;
   snake_info_->state = SHIFTING;
 }
 void Snake::MoveDown() {
-  if (snake_info_->snake->points.front().x + 1 != snake_info_->snake->points[1].x && snake_info_->snake->points.front().y != snake_info_->snake->points[1].y)snake_info_->snake->direction = DOWN_DIRECTION;
+  if (snake_info_->snake->points.front().x + 1 != snake_info_->snake->points[1].x)snake_info_->snake->direction = DOWN_DIRECTION;
   snake_info_->state = SHIFTING;
 }
 void Snake::MoveRight() {
-  if (snake_info_->snake->points.front().x != snake_info_->snake->points[1].x && snake_info_->snake->points.front().y + 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = RIGHT_DIRECTION;
+  if (snake_info_->snake->points.front().y + 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = RIGHT_DIRECTION;
   snake_info_->state = SHIFTING;
 }
 void Snake::MoveLeft() {
-  if (snake_info_->snake->points.front().x != snake_info_->snake->points[1].x && snake_info_->snake->points.front().y - 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = LEFT_DIRECTION;
+  if (snake_info_->snake->points.front().y - 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = LEFT_DIRECTION;
   snake_info_->state = SHIFTING;
 }
 
@@ -161,7 +159,6 @@ void Snake::MoveForward() {
     new_point.y-=1;
   }
   if (IsCollision(new_point)) {
-    mvprintw(35, 2,"%watta" );
     snake_info_->state = GAMEOVER;
   } else {
     if (!IsEating(new_point)) {

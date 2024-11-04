@@ -188,9 +188,9 @@ void Tetris::Check() {
     game_info_->speed = game_info_->level;
   NewStatsSaveInit();
   // delete?
-  // if (tetris_->state != SPAWN) {
-  //   tetris_->state = SHIFTING;
-  // }
+  if (tetris_->state != SPAWN) {
+    tetris_->state = SHIFTING;
+  }
 }
 
 bool Tetris::CheckFirstLine() {

@@ -4,6 +4,7 @@ void PrintOverlay(void) {
   start_color();
   init_pair(1, COLOR_CYAN, COLOR_BLACK);
   init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
   attron(COLOR_PAIR(1));
   PrintRectangle(0, BOARD_N - 1, 0, BOARD_M + 1);
   PrintRectangle(0, BOARD_N - 1, BOARD_M + 2, BOARD_M + HUD_WIDTH + 5);
@@ -84,6 +85,10 @@ void PrintBoard(int field[ROWS_MAP][COLS_MAP]) {
     for (int y = 0; y < COLS_MAP; y++) {
       if (field[x][y] == 1) {
         MVPRINTW(x + BOARDS_BEGIN + 1, y * 3 + 2, BLOCK);
+      } else if (field[x][y] == 2) {
+        attron(COLOR_PAIR(3));
+        MVPRINTW(x + BOARDS_BEGIN + 1, y * 3 + 2, BLOCK);
+        attron(COLOR_PAIR(2));
       } else {
         CLEAR_BACKPOS(x + BOARDS_BEGIN + 1, y * 3 + 2);
       }
