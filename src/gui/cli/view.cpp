@@ -103,6 +103,13 @@ void PrintGameOver(GameInfo_t stats) {
   napms(3000);
 }
 
+void PrintGameWin() {
+  MVPRINTW(1, 10, "YOU WIN");
+  MVPRINTW(2, 9, "%s", "Come again!");
+  refresh();
+  napms(3000);
+}
+
 void PrintNextTetramino(int figure[4][4]) {
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {

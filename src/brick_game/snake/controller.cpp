@@ -93,7 +93,9 @@ void GameLoop() {
     }
     if (snake_info.state == GAMEOVER) PrintGameOver(game_info);
     // либо засунуть в такие моменты в параметр паузы 2, 3 геймовер и победа либо... просто добавить отдельную функцию и вызывать также и в qt
-    // if (snake_info.pause == 1) PrintWin(game_info);
+    if (game_info.score == 200) {
+      PrintGameWin(); snake_info.state = EXIT_STATE;
+    }
     if (snake_info.state == EXIT_STATE) no_break = FALSE;
   }
 }

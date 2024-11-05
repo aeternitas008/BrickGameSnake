@@ -28,7 +28,7 @@ void userInput(UserAction_t signal, bool hold) {
   Tetris_t tetris_info = tetris.GetTetrisInfo();
   GameInfo_t game_info = tetris.updateCurrentState();
   tetris.SetHold(hold);
-  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, nullptr, &Tetris::GameOver, &Tetris::ExitState};
+  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, &Tetris::Shifting, &Tetris::GameOver, &Tetris::ExitState};
   action fsm_table[2][9] = {
       {&Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
       {nullptr, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check},
@@ -62,11 +62,8 @@ void BoardPlusTetramino(GameInfo_t *game_info, Tetramino_t tetramino) {
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
       if (tetramino.figure[x][y] == 1) {
-        if (tetramino.point->x + x < ROWS_MAP && tetramino.point->y + y < COLS_MAP) {
-          game_info->field[tetramino.point->x + x][tetramino.point->y + y] = 1;
-        }
-        // game_info->field[tetramino.point->x + x]
-        //                 [tetramino.point->y + y] = 1;
+        game_info->field[tetramino.point->x + x]
+                        [tetramino.point->y + y] = 1;
       }
 
     }
@@ -79,30 +76,30 @@ void GameLoop() {
   GameInfo_t game_info;
   Tetris_t tetris_info;
   Tetramino_t tetramino;
+  State_t state;
   int signal = 0;
   while (no_break) {
     game_info = tetris.updateCurrentState();
     tetris_info = tetris.GetTetrisInfo();
-    State_t state = tetris_info.state;
-    mvprintw(30,5, "%d", tetris_info.state);
+    state = tetris_info.state;
     int hold = 0;
     if (state == MOVING || state == START) signal = GET_USER_INPUT;
     if (signal == KEY_DOWN) {
       hold = 1;
     }
     userInput(GetSignal(signal), hold);
+    tetris_info = tetris.GetTetrisInfo();
+    state = tetris_info.state;
     if(game_info.pause == 1) {
       PauseGame(tetris, game_info);
     }
     if (state != START) {
       tetramino = tetris.GetTetramino();
-      tetris.Shifting();
       BoardPlusTetramino(&game_info, tetramino);
       UpdateView(game_info);
       PrintNextTetramino(game_info.next);
     }
     if (state == GAMEOVER) PrintGameOver(game_info);
     if (state == EXIT_STATE) no_break = FALSE;
-    napms(10);
   }
 }

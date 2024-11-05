@@ -63,7 +63,7 @@ void PrintBoard(int field[ROWS_MAP][COLS_MAP]);
  * включающей текущий счет.
  */
 void PrintGameOver(GameInfo_t stats);
-
+void PrintGameWin();
 /**
  * @brief Отображает сообщение о паузе.
  */
@@ -73,33 +73,10 @@ void PrintPause();
  * @brief Очищает сообщение о паузе.
  */
 void ClearPause();
-void PrintTime(int realtime[2]);
 
 void PrintNextTetramino(int figure[4][4]);
 
 void UpdateView(GameInfo_t game_info);
-
-// /**
-//  * @brief Перечисление направлений движения змейки.
-//  */
-// enum Direction_t {
-//   UP_DIRECTION = 0, /**< Начало игры */
-//   RIGHT_DIRECTION,    /**< Фигура движется */
-//   DOWN_DIRECTION,  /**< Сдвиг или поворот фигуры */
-//   LEFT_DIRECTION,     /**< Появление новой фигуры */
-// };
-
-// /**
-//  * @brief Структура, представляющая координаты на игровом поле.
-//  */
-// struct Position_t{
-//   int x, y; /**< Координаты */
-// };
-
-// struct Snake_t {
-//   std::deque<Position_t> points; /**< Координаты точек змейки */
-//   Direction_t direction; /**< Направление движения змейки (0-3) */
-// };
 
 // void PrintSnake(Snake_t snake);
 

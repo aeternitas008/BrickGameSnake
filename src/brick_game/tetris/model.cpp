@@ -219,8 +219,8 @@ void Tetris::Spawn() {
       game_info_->next[i][j] = next_tetramino.figure[i][j];
     }
   }
-
   if (CheckTetramino(*tetris_->tetramino) || CheckFirstLine()) {
+    mvprintw(35,36, "yes");
     tetris_->state = GAMEOVER;
   } else {
     tetris_->state = SHIFTING;
