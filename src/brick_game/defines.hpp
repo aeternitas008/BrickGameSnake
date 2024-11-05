@@ -42,7 +42,7 @@
 #define BOARDS_BEGIN 2
 #define SNAKE_START_X (10)
 #define SNAKE_START_Y (5)
-#define TETR_START_X (0)
+#define TETR_START_X (-1)
 #define TETR_START_Y (3)
 #define INTRO_MESSAGE_LEN 21
 #define BOARD_N (ROWS_MAP + MAP_PADDING * 2)
@@ -71,6 +71,19 @@ enum UserAction_t {
 };
 
 /**
+ * @brief Структура, содержащая информацию об игре.
+ */
+struct GameInfo_t {
+  int field[ROWS_MAP][COLS_MAP]; /**< Двумерный массив игрового поля */
+  int next[4][4]; /**< Двумерный массив для отображения следующего тетромино */
+  int score;  /**< Текущий счет игрока */
+  int high_score; /**< Максимальный достигнутый счет */
+  int level;      /**< Текущий уровень */
+  int speed;      /**< Скорость падения фигур */
+  int pause;      /**< Состояние паузы */
+};
+
+/**
  * @brief Перечисление состояний игры.
  */
 enum State_t {
@@ -89,18 +102,5 @@ struct Position_t {
   int x, y; /**< Координаты */
 };
 
-
-/**
- * @brief Структура, содержащая информацию об игре.
- */
-struct GameInfo_t {
-  int field[ROWS_MAP][COLS_MAP]; /**< Двумерный массив игрового поля */
-  int next[4][4]; /**< Двумерный массив для отображения следующего тетромино */
-  int score;  /**< Текущий счет игрока */
-  int high_score; /**< Максимальный достигнутый счет */
-  int level;      /**< Текущий уровень */
-  int speed;      /**< Скорость падения фигур */
-  int pause;      /**< Состояние паузы */
-};
 
 #endif

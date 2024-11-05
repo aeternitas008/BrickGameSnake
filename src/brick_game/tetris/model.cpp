@@ -20,7 +20,6 @@ std::array<int, 4>& last_tetraminos = tetris_->tetramino->last_tetramino;
 }
 
 void Tetris::GetPseudoRandomTypeTetramino() {
-  srand(time(0));
   int tetramino = rand() % 7;
   while (!isUnique(tetramino, tetris_->tetramino->last_tetramino)) {
     tetramino = rand() % 7;
@@ -126,16 +125,13 @@ int Tetris::Offset(struct timespec last_time, struct timespec current_time) {
 void Tetris::Shifting() {
   struct timespec current_time;
   clock_gettime(CLOCK_REALTIME, &current_time);
-  mvprintw(34, 35, "%d", tetris_->tetramino->type);
   // difficult level
   int delay = BASE_DELAY * pow(0.8, game_info_->level - 1);
   if (Offset(*tetris_->time, current_time) >= delay) {
-    mvprintw(34, 35, "%d", tetris_->tetramino->type);
     MoveDown();
     tetris_->time->tv_sec = current_time.tv_sec;
     tetris_->time->tv_nsec = current_time.tv_nsec;
   }
-  napms(20);
   if (tetris_->state != SPAWN) {
     tetris_->state = MOVING;
   }
@@ -317,17 +313,3 @@ void Tetris::TurnRight() {
   tetris_->state = SHIFTING;
 }
 
-void Tetris::GamePause() {
-  game_info_->pause = 1;
-}
-
-void Tetris::GameResume() {
-  game_info_->pause = 0;
-  tetris_->state = MOVING;
-}
-
-void Tetris::GameOver() {
-  tetris_->state = EXIT_STATE;
-}
-
-void Tetris::ExitState() { tetris_->state = EXIT_STATE; }

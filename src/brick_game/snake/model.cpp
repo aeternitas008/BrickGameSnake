@@ -1,5 +1,5 @@
 #include "model.hpp"
-#include "defines.hpp"
+#include "../defines.hpp"
 
 int Snake::IsBodySnake(Position_t point) {
   int result = 0;
@@ -119,9 +119,7 @@ void Snake::Check() {
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_SNK + 1;
     game_info_->speed = game_info_->level;
     NewStatsSaveInit();
-  if (snake_info_->state != SPAWN) {
     snake_info_->state = SHIFTING;
-  }
 }
 
 void Snake::Spawn() {
@@ -172,18 +170,3 @@ void Snake::MoveForward() {
     snake_info_->snake->points.push_front(new_point);
   }
 }
-
-void Snake::GamePause() {
-  game_info_->pause = 1;
-}
-
-void Snake::GameResume() {
-  game_info_->pause = 0;
-  snake_info_->state = MOVING;
-}
-
-void Snake::GameOver() {
-  snake_info_->state = EXIT_STATE;
-}
-
-void Snake::ExitState() { snake_info_->state = EXIT_STATE; }

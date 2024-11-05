@@ -79,15 +79,13 @@ void GameLoop() {
   State_t state;
   int signal = 0;
   while (no_break) {
-    game_info = tetris.updateCurrentState();
     tetris_info = tetris.GetTetrisInfo();
     state = tetris_info.state;
     int hold = 0;
     if (state == MOVING || state == START) signal = GET_USER_INPUT;
-    if (signal == KEY_DOWN) {
-      hold = 1;
-    }
+    if (signal == KEY_DOWN)  hold = 1;
     userInput(GetSignal(signal), hold);
+    game_info = tetris.updateCurrentState();
     tetris_info = tetris.GetTetrisInfo();
     state = tetris_info.state;
     if(game_info.pause == 1) {

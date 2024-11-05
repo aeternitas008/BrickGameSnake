@@ -7,7 +7,6 @@
 #include <string.h>
 #include <time.h>
 #include <array>
-
 #include "../defines.hpp"
 
 /**
@@ -83,7 +82,6 @@ class Tetris {
   bool CheckFirstLine();
 
   bool IsNotBlockBelow();
-
   bool IsBlockRight();
   bool IsBlockLeft();
 
@@ -179,7 +177,6 @@ class Tetris {
    */
   void Shifting();
 
-  void MoveUp();
   /**
    * @brief Сдвигает тетрамино вниз, если под ним нет блокирующих элементов.
    *
@@ -190,18 +187,23 @@ class Tetris {
    * @param game_info_ Указатель на структуру GameInfo_t с параметрами игры.
    */
   void MoveDown();
-
+  void MoveUp();
   void MoveRight();
   void MoveLeft();
-  void GameOver();
-  void ExitState();
   void Check();
   void TurnRight();
-  void GamePause();
-  void GameResume();
-
   int Offset(struct timespec last_time, struct timespec current_time);
-
+  void GamePause() {
+    game_info_->pause = 1;
+  }
+  void GameResume() {
+    game_info_->pause = 0;
+    tetris_->state = MOVING;
+  }
+  void GameOver() {
+    tetris_->state = EXIT_STATE;
+  }
+  void ExitState() { tetris_->state = EXIT_STATE; }
   void SetHold(int x) {
     tetris_->hold = x;
   }
