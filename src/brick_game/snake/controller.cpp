@@ -96,6 +96,7 @@ void GameLoop() {
     if (game_info.score == 200) {
       PrintGameWin(); snake_info.state = EXIT_STATE;
     }
+    // i can delete all cursors without destructors because its hard "prorok" and just use delete(snake)...
     if (snake_info.state == EXIT_STATE) no_break = FALSE;
   }
 }
