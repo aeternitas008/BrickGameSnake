@@ -1,10 +1,10 @@
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#ifndef CONTROLLER_SNAKE_H
+#define CONTROLLER_SNAKE_H
 
 #include "model.hpp"
-#include "../../gui/cli/view.hpp"
-void userInput(UserAction_t action, bool hold);
-UserAction_t GetSignal(int user_input);
-void GameLoop();
+#include "../../gui/cli/ConsoleView.h"
+// void userInput(UserAction_t action, bool hold);
+// UserAction_t GetSignal(int user_input);
+void GameLoopSnake(ViewInterface *view);
 
-#endif // CONTROLLER_H
+#endif // CONTROLLER_SNAKE_H
