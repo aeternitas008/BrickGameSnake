@@ -27,11 +27,13 @@
 #include <string>
 #include <iostream>
 #include "gui/cli/ConsoleView.h"
-#include "brick_game/snake/controller.hpp"
-#include "brick_game/tetris/controller.hpp"
+#include "brick_game/snake/ControllerSnake.h"
+#include "brick_game/tetris/ControllerTetris.h"
 #ifdef USE_QT
-#include <QApplication>
-#include "QtView.h"
+    #undef scroll
+    #include <QApplication>
+    #include "gui/desktop/QtView.h"
+    #include "gui/desktop/GameWindow.hpp"
 #endif
 
 int main(int argc, char *argv[]) {
@@ -42,7 +44,9 @@ int main(int argc, char *argv[]) {
     }
 #ifdef USE_QT
     QApplication app(argc, argv);
+    GameWindow window;
     QtView view;
+    window.setView(&view);
     if (gameChoice == "snake") {
         GameLoopSnake(&view);  // Запускаем игру с Qt интерфейсом
     } else if (gameChoice == "tetris") {
