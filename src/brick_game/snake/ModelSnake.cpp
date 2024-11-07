@@ -93,7 +93,7 @@ void Snake::Shifting() {
   struct timespec current_time;
   clock_gettime(CLOCK_REALTIME, &current_time);
   // difficult level
-  int delay = BASE_DELAY * pow(0.8, game_info_->level - 1);
+  int delay = BASE_DELAY_SNK * pow(0.8, game_info_->level - 1);
   if (Offset(*snake_info_->time, current_time) >= delay) {
     MoveForward();
     snake_info_->time->tv_sec = current_time.tv_sec;

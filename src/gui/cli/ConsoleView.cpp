@@ -121,8 +121,3 @@ void ConsoleView::PrintNextTetramino(int figure[4][4]) {
     }
   }
 }
-
-// void UpdateView(GameInfo_t game_info_) {
-//   PrintStats(game_info_);
-//   PrintBoard(game_info_.field);
-// }
