@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <wchar.h>
 #include <ncurses.h>
+#undef border
 #include <cstdio>
 
 #include "../../brick_game/defines.hpp"
@@ -24,10 +25,9 @@ private:
 
     void PrintField();
 public:
-    void UpdateView(GameInfo_t gameInfo) override {
-        // Реализация для консоли, например, вывод поля
-        PrintBoard(gameInfo.field);
-        PrintStats(gameInfo);
+    void UpdateView(GameInfo_t game_info) override {
+        PrintBoard(game_info.field);
+        PrintStats(game_info);
     }
 
     void DisplayPause() override {

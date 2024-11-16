@@ -3,8 +3,25 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 
-GameWindow::GameWindow(QWidget *parent) 
-    : QWidget(parent), isPaused(false) {}
+GameWindow::GameWindow(QWidget *parent) : QWidget(parent), gameView(view) {
+    setFixedSize(800, 600);  // Размер окна
+    setWindowTitle("Brick Game");
+
+    // Подключаем сигналы из QtView к слотам
+    connect(gameView, &QtView::UpdateGameInfo, this, &GameWindow::onUpdateGameInfo);
+    connect(gameView, &QtView::ShowPause, this, &GameWindow::onShowPause);
+    connect(gameView, &QtView::HidePause, this, &GameWindow::onHidePause);
+    connect(gameView, &QtView::ShowGameOver, this, &GameWindow::onShowGameOver);
+    connect(gameView, &QtView::ShowGameWin, this, &GameWindow::onShowGameWin);
+    connect(gameView, &QtView::PrintOverlay, this, &GameWindow::onPrintOverlay);
+    connect(gameView, &QtView::PrintField, this, &GameWindow::onPrintField);
+    connect(gameView, &QtView::PrintNextTetramino, this, &GameWindow::onPrintNextTetramino);
+
+    // Таймер для обновления игры
+    gameTimer = new QTimer(this);
+    connect(gameTimer, &QTimer::timeout, this, &GameWindow::updateGame);
+    gameTimer->start(100);  // Таймер обновления с интервалом 100 мс
+}
 
 void GameWindow::setView(QtView *view) {
     connect(view, &QtView::UpdateGameInfo, this, &GameWindow::onUpdateGameInfo);
@@ -34,7 +51,7 @@ void GameWindow::paintEvent(QPaintEvent *event) {
     }
 }
 
-void GameWindow::onUpdateGameInfo(GameInfo_t gameInfo) {
+void GameWindow::onUpdateGameInfo(GameInfo_t game_info) {
     currentGameInfo = gameInfo;
     update();  // Перерисовать окно
 }

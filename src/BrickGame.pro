@@ -6,7 +6,7 @@ CONFIG -= app_bundle
 
 QT += core gui widgets
 
-DEFINES += USE_QT
+#DEFINES += USE_QT
 
 LIBS += -lncurses
 
