@@ -1,6 +1,8 @@
 #ifndef TETRISGAME_H
 #define TETRISGAME_H
 
+#undef scroll
+#include "../brick_game/tetris/ModelTetris.h"  // Подключаем вашу модель Tetris
 #include <QWidget>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -9,21 +11,30 @@
 #include <QFrame>
 #include <QPainter>
 #include <QKeyEvent>
-#include "../brick_game/tetris/ModelTetris.h"  // Подключаем вашу модель Tetris
-#include "../brick_game/tetris/ControllerTetris.h"
 
 class BrickGame : public QWidget {
     Q_OBJECT
 
 public:
-    explicit BrickGame(QWidget *parent = nullptr);
+    explicit BrickGame(Tetris& tetrisInstance, QWidget* parent = nullptr);
+    QTimer* getGameTimer() const { return gameTimer; }
+    void drawField(GameInfo_t);
+    void showGameOver();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent* event) override {
+        emit keyPressed(event);
+    }
+    
+private:
+    Tetris& tetris;  // Ссылка на объект Tetris
 
 private slots:
     void updateGame();
+
+signals:
+    void keyPressed(QKeyEvent* event);
 
 private:
     QFrame *gameBoardFrame;
@@ -34,7 +45,6 @@ private:
     QLabel *levelLabel;
     QLabel *speedLabel;
     QTimer *gameTimer;
-    Tetris tetris;  // Инстанс вашей игры
 
     void updateStats();  // Обновление статистики на экране
 };

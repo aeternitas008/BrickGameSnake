@@ -16,8 +16,11 @@ DESTDIR = $$PWD/bin/
 SOURCES += main1.cpp \
            BrickGame.cpp \
            ../brick_game/tetris/ModelTetris.cpp \
-           ../brick_game/tetris/ControllerTetris.cpp
+           ../brick_game/tetris/ControllerTetris.cpp \
+           TetrisController.cpp \
 
 HEADERS += BrickGame.h \
            ../brick_game/tetris/ModelTetris.h \
-           ../brick_game/tetris/ControllerTetris.h
+           ../brick_game/tetris/ControllerTetris.h \
+           InputHandler.h \
+           TetrisController.h \
