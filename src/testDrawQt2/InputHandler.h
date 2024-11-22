@@ -51,6 +51,7 @@ public:
         case Qt::Key_Down:
         case KEY_DOWN:
             signal =  Down;
+            break;
         case Qt::Key_Space:
             signal =  Action;
             break;

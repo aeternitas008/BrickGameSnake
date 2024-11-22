@@ -8,14 +8,21 @@ TetrisController::TetrisController(BrickGame* view, Tetris& tetrisInstance, QObj
 }
 
 void TetrisController::processInput(QKeyEvent* event) {
+    int hold = 0;
+    qDebug() << "key -> " << event->key();
     UserAction_t signal = inputHandler.GetSignal(event->key());
-    tetris.userInput(signal, 0);
+    qDebug() << "signal -> " << signal;
+    if (signal == Down) hold = 1;
+    tetris.userInput(signal, hold);
+    view->update();
 }
 
 void TetrisController::updateGame() {
-    tetris.Shifting();
+    // tetris.Shifting();
+    QKeyEvent* fakeEvent = new QKeyEvent(QEvent::KeyPress, 10, Qt::NoModifier);
+    processInput(fakeEvent);
     updateView();
-
+    qDebug() << "update game in controller ";
     // Проверка состояния игры
     Tetris_t tetrisInfo = tetris.GetTetrisInfo();
     if (tetrisInfo.state == GAMEOVER) {
@@ -33,7 +40,6 @@ void SumTetris(GameInfo_t *game_info, Tetramino_t tetramino) {
         game_info->field[tetramino.point->x + x]
                         [tetramino.point->y + y] = 1;
       }
-
     }
   }
 }
@@ -41,7 +47,9 @@ void SumTetris(GameInfo_t *game_info, Tetramino_t tetramino) {
 void TetrisController::updateView() {
     GameInfo_t game_info = tetris.updateCurrentState();
     Tetramino_t current_tetramino = tetris.GetTetramino();
-    SumTetris(&game_info, current_tetramino);
-    view->drawField(game_info);
-    // view->updateStats(game_info);
+    game_info_board = game_info;
+    SumTetris(&game_info_board, current_tetramino);
+    
+    qDebug() << "controller ";
+    // view->update();
 }

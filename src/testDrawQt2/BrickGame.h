@@ -38,8 +38,9 @@ signals:
 
 private:
     QFrame *gameBoardFrame;
-    QWidget *gameBoard;
     QFrame *statsFrame;
+    QFrame *nextTetrominoFrame;
+
     QLabel *highScoreLabel;
     QLabel *scoreLabel;
     QLabel *levelLabel;

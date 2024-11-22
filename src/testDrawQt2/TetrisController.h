@@ -18,8 +18,8 @@ public slots:
 private:
     BrickGame* view;
     Tetris& tetris;
+    GameInfo_t game_info_board;
     InputHandler inputHandler;
-
     // void handleUserAction(UserAction_t action);
     void updateView();
 };
