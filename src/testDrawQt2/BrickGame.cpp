@@ -21,8 +21,6 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
     statsFrame->setFrameStyle(QFrame::Box | QFrame::Plain);
     statsFrame->setLineWidth(2);
     QVBoxLayout *statsLayout = new QVBoxLayout(statsFrame);
-
-
     // High Score
     highScoreLabel = new QLabel("High Score: 0", this);
     statsLayout->addWidget(highScoreLabel);
@@ -43,15 +41,11 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
     nextTetrominoFrame->setLineWidth(2);
     // nextTetrominoFrame->setAlignment(Qt::AlignCenter);
     statsLayout->addWidget(nextTetrominoFrame);
-
     statsLayout->addStretch();  // Добавляем растяжение, чтобы выровнять статистику
-
     mainLayout->addWidget(statsFrame);  // Добавляем статистику в основной макет
-
-        // Устанавливаем пропорции ширины
+    // Устанавливаем пропорции ширины
     mainLayout->setStretch(0, 3); // Левый frame (игровое поле) - занимает 3 части
     mainLayout->setStretch(1, 2); // Правый frame (панель статистики) - занимает 1 часть
-
 
     setLayout(mainLayout);
     // Создание таймера для обновления состояния игры
@@ -62,6 +56,27 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
 
 void BrickGame::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
+
+
+    // QPainter painter(this);
+
+    // // Перерисовываем только измененные области
+    // QRect regionToUpdate = event->region().boundingRect();
+    // int startRow = regionToUpdate.y() / cellSize;
+    // int endRow = (regionToUpdate.y() + regionToUpdate.height()) / cellSize;
+
+    // for (int row = startRow; row <= endRow; ++row) {
+    //     for (int col = 0; col < COLS_MAP; ++col) {
+    //         QRect cellRect(xOffset + col * cellSize, yOffset + row * cellSize, cellSize, cellSize);
+    //         painter.drawRect(cellRect);
+
+    //         if (gameInfo.field[row][col] == 1) {
+    //             painter.fillRect(cellRect, Qt::blue);
+    //         }
+    //     }
+    // }
+
+
 
     QPainter painter(this);
     int cellSize = gameBoardFrame->width() / COLS_MAP;  // Размер ячейки
@@ -75,13 +90,13 @@ void BrickGame::paintEvent(QPaintEvent *event) {
     auto tetramino = tetris.GetTetramino();
 
     for (int x = 0; x < 4; x++) {
-    for (int y = 0; y < 4; y++) {
-      if (tetramino.figure[x][y] == 1) {
-        game_info.field[tetramino.point->x + x]
-                        [tetramino.point->y + y] = 1;
-      }
+        for (int y = 0; y < 4; y++) {
+        if (tetramino.figure[x][y] == 1) {
+            game_info.field[tetramino.point->x + x]
+                            [tetramino.point->y + y] = 1;
+        }
+        }
     }
-  }
 
     // Рисуем игровое поле внутри рамки
     for (int row = 0; row < ROWS_MAP; ++row) {
@@ -105,14 +120,6 @@ void BrickGame::paintEvent(QPaintEvent *event) {
         painter.setPen(Qt::black);
         painter.setBrush(Qt::NoBrush);
 
-        // // Пример данных для следующего тетромино
-        // std::vector<std::vector<int>> nextTetromino = {
-        //     {0, 1, 0, 0},
-        //     {0, 1, 0, 0},
-        //     {0, 1, 1, 0},
-        //     {0, 0, 0, 0},
-        // };
-
         for (int row = 0; row < 4; ++row) {
             for (int col = 0; col < 4; ++col) {
                 QRect cellRect(
@@ -122,7 +129,7 @@ void BrickGame::paintEvent(QPaintEvent *event) {
                     miniCellSize);
                 painter.drawRect(cellRect);
                 if (game_info.next[row][col] == 1) {
-                    painter.fillRect(cellRect, Qt::red);
+                    painter.fillRect(cellRect, Qt::green);
                 }
             }
         }
