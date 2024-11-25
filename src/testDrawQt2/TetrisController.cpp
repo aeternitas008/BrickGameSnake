@@ -1,55 +1,71 @@
 #include "TetrisController.h"
 #include <QDebug>
+#include <QApplication>
 
 TetrisController::TetrisController(BrickGame* view, Tetris& tetrisInstance, QObject* parent)
     : QObject(parent), view(view), tetris(tetrisInstance) {
-    connect(view, &BrickGame::keyPressed, this, &TetrisController::processInput);
-    connect(view->getGameTimer(), &QTimer::timeout, this, &TetrisController::updateGame);
+  connect(view, &BrickGame::keyPressed, this, &TetrisController::processInput);
+  connect(view->getGameTimer(), &QTimer::timeout, this, &TetrisController::updateGame);
 }
 
-void TetrisController::processInput(QKeyEvent* event) {
-    int hold = 0;
-    qDebug() << "key -> " << event->key();
-    UserAction_t signal = inputHandler.GetSignal(event->key());
-    qDebug() << "signal -> " << signal;
-    if (signal == Down) hold = 1;
+void TetrisController::processInput(QKeyEvent* event = nullptr) {
+    UserAction_t signal = (event) ? inputHandler.GetSignal(event->key()) : Nosig;
+    int hold = (signal == Down) ? 1 : 0;
+
     tetris.userInput(signal, hold);
-    view->update();
-}
-
-void TetrisController::updateGame() {
-    // tetris.Shifting();
-    QKeyEvent* fakeEvent = new QKeyEvent(QEvent::KeyPress, 10, Qt::NoModifier);
-    processInput(fakeEvent);
     updateView();
-    qDebug() << "update game in controller ";
-    // Проверка состояния игры
-    Tetris_t tetrisInfo = tetris.GetTetrisInfo();
-    if (tetrisInfo.state == GAMEOVER) {
-        view->getGameTimer()->stop();
-        view->showGameOver();
-    } else if (tetrisInfo.state == EXIT_STATE) {
-        view->getGameTimer()->stop();
+
+    if (event) {
+        qDebug() << "Processing user input: " << event->key();
+        qDebug() << "signal -> " << signal;
     }
 }
 
+void TetrisController::updateGame() {
+    GameInfo_t game_info = tetris.updateCurrentState();
+    Tetris_t tetris_info = tetris.GetTetrisInfo();
+    
+    if (game_info.pause == 1) {
+        qDebug() << "Game is paused";
+        return;
+    }
+    
+    processInput();
+
+    // Проверка состояния игры: GAMEOVER или EXIT_STATE
+    if (tetris_info.state == GAMEOVER || tetris_info.state == EXIT_STATE) {
+        // Остановить таймеры при GAMEOVER или EXIT_STATE
+        inputTimer->stop();
+        view->getGameTimer()->stop();
+        
+        // Отобразить сообщение о завершении игры
+        if (tetris_info.state == GAMEOVER) {
+            view->showGameOver();
+        }
+        // Завершаем работу игры (если EXIT_STATE)
+        if (tetris_info.state == EXIT_STATE) {
+            QApplication::quit(); // Закрытие приложения
+        }
+        return;
+    }
+
+    // Обновление игры, если все в порядке
+    updateView();
+}
+
 void SumTetris(GameInfo_t *game_info, Tetramino_t tetramino) {
-  for (int x = 0; x < 4; x++) {
-    for (int y = 0; y < 4; y++) {
-      if (tetramino.figure[x][y] == 1) {
-        game_info->field[tetramino.point->x + x]
-                        [tetramino.point->y + y] = 1;
+  for (int dx = 0; dx < 4; ++dx) {
+    for (int dy = 0; dy < 4; ++dy) {
+      if (tetramino.figure[dx][dy] == 1) {
+        int x = tetramino.point->x + dx;
+        int y = tetramino.point->y + dy;
+        game_info->field[x][y] = 1;
       }
     }
   }
 }
 
 void TetrisController::updateView() {
-    GameInfo_t game_info = tetris.updateCurrentState();
-    Tetramino_t current_tetramino = tetris.GetTetramino();
-    game_info_board = game_info;
-    SumTetris(&game_info_board, current_tetramino);
-    
-    qDebug() << "controller ";
-    // view->update();
+  qDebug() << "update view in controller ";
+  view->update();
 }

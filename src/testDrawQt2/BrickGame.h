@@ -18,15 +18,15 @@ class BrickGame : public QWidget {
 public:
     explicit BrickGame(Tetris& tetrisInstance, QWidget* parent = nullptr);
     QTimer* getGameTimer() const { return gameTimer; }
-    void drawField(GameInfo_t);
     void showGameOver();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void keyPressEvent(QKeyEvent* event) override {
-        emit keyPressed(event);
-    }
-    
+    void keyPressEvent(QKeyEvent* event) override;
+    void drawGameField(QPainter& painter);
+    void drawPausedScreen(QPainter& painter);
+    void drawStartScreen(QPainter& painter);
+
 private:
     Tetris& tetris;  // Ссылка на объект Tetris
 
@@ -47,6 +47,7 @@ private:
     QLabel *speedLabel;
     QTimer *gameTimer;
 
+    bool isGameStarted = false;  // Флаг состояния игры
     void updateStats();  // Обновление статистики на экране
 };
 

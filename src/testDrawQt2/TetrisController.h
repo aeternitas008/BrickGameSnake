@@ -20,7 +20,9 @@ private:
     Tetris& tetris;
     GameInfo_t game_info_board;
     InputHandler inputHandler;
-    // void handleUserAction(UserAction_t action);
+
+    QTimer* inputTimer;
+
     void updateView();
 };
 

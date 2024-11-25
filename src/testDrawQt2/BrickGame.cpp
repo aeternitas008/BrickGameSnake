@@ -51,86 +51,105 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
     // Создание таймера для обновления состояния игры
     gameTimer = new QTimer(this);
     connect(gameTimer, &QTimer::timeout, this, &BrickGame::updateGame);
-    gameTimer->start(100);  // Начальная скорость (500 мс)
+    // gameTimer->start(100);  // Начальная скорость (500 мс)
 }
+
+
+// void BrickGame::keyPressEvent(QKeyEvent* event) {
+//     if (!isGameStarted && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
+//         isGameStarted = true;
+//         gameTimer->start(100);  // Запускаем таймер
+//         update();               // Перерисовка для удаления стартового текста
+//     } else if (isGameStarted) {
+//         emit keyPressed(event);  // Обработка остальных нажатий
+//     }
+// }
+
+void BrickGame::keyPressEvent(QKeyEvent* event) {
+    if (!isGameStarted) {
+        if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+            isGameStarted = true;
+            gameTimer->start(100);  // Запускаем таймер
+            update();               // Перерисовка для удаления стартового текста
+        }
+        return;
+    } else {
+        GameInfo_t game_info = Tetris::updateCurrentState();
+        if (game_info.pause == 1) {
+            if (event->key() == Qt::Key_P || event->key() == Qt::Key_Escape) {
+                emit keyPressed(event);  // Обрабатываем только Pause и Exit
+            }
+            return;
+        } else {
+            emit keyPressed(event);  // Обработка остальных нажатий
+        }
+    }
+}
+
 
 void BrickGame::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
-
-
-    // QPainter painter(this);
-
-    // // Перерисовываем только измененные области
-    // QRect regionToUpdate = event->region().boundingRect();
-    // int startRow = regionToUpdate.y() / cellSize;
-    // int endRow = (regionToUpdate.y() + regionToUpdate.height()) / cellSize;
-
-    // for (int row = startRow; row <= endRow; ++row) {
-    //     for (int col = 0; col < COLS_MAP; ++col) {
-    //         QRect cellRect(xOffset + col * cellSize, yOffset + row * cellSize, cellSize, cellSize);
-    //         painter.drawRect(cellRect);
-
-    //         if (gameInfo.field[row][col] == 1) {
-    //             painter.fillRect(cellRect, Qt::blue);
-    //         }
-    //     }
-    // }
-
-
-
     QPainter painter(this);
-    int cellSize = gameBoardFrame->width() / COLS_MAP;  // Размер ячейки
-    int xOffset = gameBoardFrame->geometry().x();  // Смещение игрового поля по X
-    int yOffset = gameBoardFrame->geometry().y();  // Смещение игрового поля по Y
+    // Проверяем состояние игры
+    GameInfo_t game_info = tetris.updateCurrentState();
+    // Если игра не началась, отображаем экран начала игры
+    if (!isGameStarted) {
+        drawStartScreen(painter);
+        return;
+    }
+    // Если игра на паузе, отображаем экран паузы
+    if (game_info.pause == 1) {
+        drawPausedScreen(painter);
+        return;
+    }
+    // Если игра идет, отрисовываем игровое поле
+    drawGameField(painter);
+}
+
+void BrickGame::drawStartScreen(QPainter& painter) {
+    // Вычисляем область для текста
+    QRect frameRect = gameBoardFrame->geometry();
+    QRect textRect(frameRect.x(), frameRect.y(), frameRect.width(), frameRect.height());
 
     painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 20, QFont::Bold));
+    painter.drawText(textRect, Qt::AlignCenter, "For Start press Enter");
+}
 
-    // Получаем текущее состояние игрового поля
+void BrickGame::drawPausedScreen(QPainter& painter) {
+    // Вычисляем область для текста
+    QRect frameRect = gameBoardFrame->geometry();
+    QRect textRect(frameRect.x(), frameRect.y(), frameRect.width(), frameRect.height());
+
+    painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 20, QFont::Bold));
+    painter.drawText(textRect, Qt::AlignCenter, "Paused");
+}
+
+void BrickGame::drawGameField(QPainter& painter) {
+    int cellSize = gameBoardFrame->width() / COLS_MAP;
+    int xOffset = gameBoardFrame->geometry().x();
+    int yOffset = gameBoardFrame->geometry().y();
+
+    painter.setPen(Qt::black);
     auto game_info = tetris.updateCurrentState();
     auto tetramino = tetris.GetTetramino();
 
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
-        if (tetramino.figure[x][y] == 1) {
-            game_info.field[tetramino.point->x + x]
-                            [tetramino.point->y + y] = 1;
-        }
+            if (tetramino.figure[x][y] == 1) {
+                game_info.field[tetramino.point->x + x][tetramino.point->y + y] = 1;
+            }
         }
     }
 
-    // Рисуем игровое поле внутри рамки
     for (int row = 0; row < ROWS_MAP; ++row) {
         for (int col = 0; col < COLS_MAP; ++col) {
             QRect cellRect(xOffset + col * cellSize, yOffset + row * cellSize, cellSize, cellSize);
             painter.drawRect(cellRect);
 
-            // Заполняем ячейки, если там есть блок
             if (game_info.field[row][col] == 1) {
                 painter.fillRect(cellRect, Qt::blue);
-            }
-        }
-    }
-
-    // Отрисовка следующего тетромино
-    if (nextTetrominoFrame) {
-        QRect frameRect = nextTetrominoFrame->geometry();  // Границы фрейма
-        QRect secondRect = statsFrame->geometry();  // Границы фрейма
-        int miniCellSize = frameRect.width() / 4;          // Размер ячейки в поле 4x4
-
-        painter.setPen(Qt::black);
-        painter.setBrush(Qt::NoBrush);
-
-        for (int row = 0; row < 4; ++row) {
-            for (int col = 0; col < 4; ++col) {
-                QRect cellRect(
-                    frameRect.x() + secondRect.x() + col * miniCellSize,
-                    frameRect.y() + secondRect.y() + row * miniCellSize,
-                    miniCellSize,
-                    miniCellSize);
-                painter.drawRect(cellRect);
-                if (game_info.next[row][col] == 1) {
-                    painter.fillRect(cellRect, Qt::green);
-                }
             }
         }
     }
@@ -147,7 +166,6 @@ void BrickGame::updateGame() {
         // Логика отображения паузы
         return;
     }
-    
     // Обновляем отображение и статистику
     updateStats();
     update();  // Перерисовка игрового поля
@@ -163,23 +181,6 @@ void BrickGame::updateGame() {
     }
 }
 
-void BrickGame::drawField(GameInfo_t game_info) {
-    // QPainter painter(gameBoard);
-    // int cellSize = gameBoardFrame->width() / COLS_MAP;
-
-    // for (size_t row = 0; row < ROWS_MAP; ++row) {
-    //     for (size_t col = 0; col < COLS_MAP; ++col) {
-    //         QRect cellRect(col * cellSize, row * cellSize, cellSize, cellSize);
-    //         painter.drawRect(cellRect);
-    //         if (game_info.field[row][col] == 1) {
-    //             painter.fillRect(cellRect, Qt::blue);
-    //         }
-    //     }
-    // }
-    // painter.end();
-    // updateStats();
-}
-
 void BrickGame::updateStats() {
     GameInfo_t gameInfo = Tetris::updateCurrentState();
 
@@ -191,10 +192,6 @@ void BrickGame::updateStats() {
     qDebug() << "really update stats";
 }
 
-void restartGame() {
-    return;
-}
-
 void BrickGame::showGameOver() {
     // Создаем сообщение о конце игры
     QMessageBox gameOverBox(this);
@@ -202,18 +199,13 @@ void BrickGame::showGameOver() {
     gameOverBox.setText("Game Over\nYour score: " + scoreLabel->text());
     gameOverBox.setIcon(QMessageBox::Information);
 
-    // Добавляем кнопки
-    gameOverBox.addButton("Restart", QMessageBox::AcceptRole);
+    // Убираем кнопку Restart и оставляем только Exit
     gameOverBox.addButton("Exit", QMessageBox::RejectRole);
 
     // Обрабатываем ответ пользователя
-    if (gameOverBox.exec() == QMessageBox::AcceptRole) {
-        // Перезапуск игры
-        restartGame();
-        QApplication::quit();
-    } else {
+    if (gameOverBox.exec() == QMessageBox::RejectRole) {
         // Закрытие игры
         close();
-        QApplication::quit();
+        QApplication::quit();  // Завершаем приложение
     }
 }

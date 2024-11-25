@@ -15,10 +15,6 @@
 #define KEY_LEFT 0404
 #define KEY_RIGHT 0405
 
-// enum class UserAction_t {
-//     Nosig, Start, Pause, Terminate, Left, Right, Up, Down, Action
-// };
-
 class InputHandler {
 public:
     UserAction_t GetSignal(int key) {
