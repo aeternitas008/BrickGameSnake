@@ -3,12 +3,12 @@
 
 #include <locale.h>
 #include <math.h>
-#include <ncurses.h>
 #include <string.h>
 #include <time.h>
 #include <array>
+#include <cstdio>
 #include "../defines.hpp"
-
+#include <QDebug>
 /**
  * @file main.h Файл имеет основные функции по реализации игры, а именно
  * чтение и обработку ключей, перемещение тетромино по полю и реализацию базовой
@@ -119,6 +119,8 @@ class Tetris {
       tetris_->tetramino->last_tetramino = {-1, -1, -1, -1};
       GetPseudoRandomTypeTetramino();
       tetris_->tetramino->variant = 0;
+      qDebug() << "Entering updateGame";
+      qDebug() << "state " << tetris_->state;
     }
   }
 
@@ -190,7 +192,7 @@ class Tetris {
   void TurnRight();
   int Offset(struct timespec last_time, struct timespec current_time);
   void GamePause() {
-    game_info_->pause = 1;
+    game_info_->pause = (game_info_->pause == 0);
   }
   void GameResume() {
     game_info_->pause = 0;
@@ -203,6 +205,8 @@ class Tetris {
   void SetHold(int x) {
     tetris_->hold = x;
   }
+
+  void userInput(UserAction_t signal, bool hold);
 };
 
 #endif

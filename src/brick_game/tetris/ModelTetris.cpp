@@ -31,6 +31,8 @@ void Tetris::GetPseudoRandomTypeTetramino() {
 
 void Tetris::StartGame() {
   tetris_->state = SPAWN;
+  // qDebug() << "start -> spawn ";
+
 }
 
 void Tetris::GetFigure(Tetramino_t *tetramino) {
@@ -97,18 +99,23 @@ void Tetris::TetraminoPosInit() {
 void Tetris::StatsInit() {
   int N = 256;
   char buffer[N];
-  FILE *fp = fopen(SCORE_FILE_TTR, "r");
+  FILE *fp = fopen("score.txt", "r");
   if (fp != NULL) {
     fgets(buffer, N, fp);
     char *score = strchr(buffer, ':');
+    if (score) {
     game_info_->high_score = atoi(++score);
+    } else {
+      game_info_->high_score = 0;
+    }
     fclose(fp);
   } else {
-    FILE *file = fopen(SCORE_FILE_TTR, "w");
+    FILE *file = fopen("score.txt", "w");
     fprintf(file, "score:0");
     fclose(file);
     game_info_->high_score = 0;
   }
+  // qDebug() << "stats init ok";
   game_info_->level = 1;
   game_info_->speed = 1;
   game_info_->score = 0;
@@ -162,6 +169,7 @@ void Tetris::CheckLines(int *count) {
       }
     }
   }
+  // qDebug() << "ok check line";
 }
 
 void Tetris::NewStatsSaveInit() {
@@ -183,6 +191,8 @@ void Tetris::Check() {
   if (game_info_->level < MAX_LVL)
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_TTR + 1;
     game_info_->speed = game_info_->level;
+
+  // qDebug() << "ok check line";
   NewStatsSaveInit();
   // delete?
   if (tetris_->state != SPAWN) {
@@ -210,13 +220,14 @@ void Tetris::Spawn() {
   Tetramino_t next_tetramino = *tetris_->tetramino;
   next_tetramino.type = tetris_->tetramino->next_type;
   GetFigure(&next_tetramino);
+
+  // qDebug() << "start -> spawn ";
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       game_info_->next[i][j] = next_tetramino.figure[i][j];
     }
   }
   if (CheckTetramino(*tetris_->tetramino) || CheckFirstLine()) {
-    mvprintw(35,36, "yes");
     tetris_->state = GAMEOVER;
   } else {
     tetris_->state = SHIFTING;
@@ -311,5 +322,33 @@ void Tetris::TurnRight() {
     GetFigure(tetris_->tetramino);
   }
   tetris_->state = SHIFTING;
+}
+
+void Tetris::userInput(UserAction_t signal, bool hold) {
+  // Определяем тип указателя на метод класса Tetris
+  typedef void (Tetris::*action)();
+  // Машины состояний с указателями на методы класса Tetris
+  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, &Tetris::Shifting, &Tetris::GameOver, &Tetris::ExitState };
+  action fsm_table[2][9] = {
+      { &Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
+      { &Tetris::Check, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check },
+  };
+  // Определяем указатель на метод
+  action act = nullptr;
+  // Логика выбора действия в зависимости от текущего состояния змейки
+  tetris_->hold = hold;
+  // qDebug() << "Current state: " << tetris_->state;
+  // qDebug() << "Signal received: " << signal;
+
+  if (tetris_->state != MOVING && tetris_->state != START) {
+    act = fsm_simple[tetris_->state];
+  } else {
+    int state = (tetris_->state == MOVING) ? 1 : 0;
+    act = fsm_table[state][signal];
+  }
+  // Если действие определено, вызываем его для текущего объекта
+  if (act) {
+    (this->*act)();  // Вызов метода через указатель на метод для текущего объекта
+  }
 }
 

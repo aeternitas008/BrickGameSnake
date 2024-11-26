@@ -55,6 +55,20 @@ class Snake {
 
   public:
 
+  void userInput(UserAction_t signal, bool hold);
+
+  State_t GetState() {
+      return snake_info_->state; 
+  }
+  
+  static GameInfo_t updateCurrentState() {
+    return *game_info_;
+  }
+
+  static SnakeInfo_t GetSnakeInfo() {
+    return *snake_info_;
+  }
+
   Snake() {
     if (!game_info_) {
       game_info_ = new GameInfo_t;
@@ -91,26 +105,6 @@ class Snake {
   //   }
   // }
 
-  State_t GetState() {
-      return snake_info_->state; 
-  }
-  /**
-   * @brief Возвращает указатель на статический экземпляр структуры GameInfo_t.
-   *
-   * Функция инициализирует и возвращает указатель на статический объект GameInfo_t.
-   * Используется для работы с параметрами игры в течение всего времени её
-   * выполнения.
-   *
-   * @return Указатель на структуру GameInfo_t.
-   */
-  static GameInfo_t updateCurrentState() {
-    return *game_info_;
-  }
-
-  static SnakeInfo_t GetSnakeInfo() {
-    return *snake_info_;
-  }
-
   void StartGame();
   void Spawn();
   void Shifting();
@@ -126,11 +120,7 @@ class Snake {
     snake_info_->state = EXIT_STATE;
   }
   void GamePause() {
-    game_info_->pause = 1;
-  }
-  void GameResume() {
-    game_info_->pause = 0; 
-    snake_info_->state = MOVING;
+    game_info_->pause = (game_info_->pause == 0);
   }
   void ExitState() { snake_info_->state = EXIT_STATE; }
 };

@@ -170,3 +170,27 @@ void Snake::MoveForward() {
     snake_info_->snake->points.push_front(new_point);
   }
 }
+
+void Snake::userInput(UserAction_t signal, bool hold) {
+  // Определяем тип указателя на метод класса Snake
+  typedef void (Snake::*action)();
+  // Машины состояний с указателями на методы класса Snake
+  action fsm_simple[6] = { nullptr, &Snake::Spawn, nullptr, &Snake::Shifting, &Snake::GameOver, &Snake::ExitState };
+  action fsm_table[2][9] = {
+      { &Snake::StartGame, nullptr, &Snake::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
+      { &Snake::Check, &Snake::GamePause, &Snake::ExitState, &Snake::MoveLeft, &Snake::MoveRight, &Snake::MoveUp, &Snake::MoveDown, nullptr, &Snake::Check },
+  };
+  // Определяем указатель на метод
+  action act = nullptr;
+  // Логика выбора действия в зависимости от текущего состояния змейки
+  if (snake_info_->state != MOVING && snake_info_->state != START) {
+    act = fsm_simple[snake_info_->state];
+  } else {
+    int state = (snake_info_->state == MOVING) ? 1 : 0;
+    act = fsm_table[state][signal];
+  }
+  // Если действие определено, вызываем его для текущего объекта
+  if (act) {
+    (this->*act)();  // Вызов метода через указатель на метод для текущего объекта
+  }
+}
