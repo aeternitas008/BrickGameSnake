@@ -39,7 +39,6 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
     nextTetrominoFrame->setFixedSize(100, 100); // Задаем размер для поля 4x4
     nextTetrominoFrame->setFrameStyle(QFrame::Box | QFrame::Plain);
     nextTetrominoFrame->setLineWidth(2);
-    // nextTetrominoFrame->setAlignment(Qt::AlignCenter);
     statsLayout->addWidget(nextTetrominoFrame);
     statsLayout->addStretch();  // Добавляем растяжение, чтобы выровнять статистику
     mainLayout->addWidget(statsFrame);  // Добавляем статистику в основной макет
@@ -54,23 +53,13 @@ BrickGame::BrickGame(Tetris& tetrisInstance, QWidget* parent)
     // gameTimer->start(100);  // Начальная скорость (500 мс)
 }
 
-
-// void BrickGame::keyPressEvent(QKeyEvent* event) {
-//     if (!isGameStarted && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
-//         isGameStarted = true;
-//         gameTimer->start(100);  // Запускаем таймер
-//         update();               // Перерисовка для удаления стартового текста
-//     } else if (isGameStarted) {
-//         emit keyPressed(event);  // Обработка остальных нажатий
-//     }
-// }
-
 void BrickGame::keyPressEvent(QKeyEvent* event) {
     if (!isGameStarted) {
         if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
             isGameStarted = true;
             gameTimer->start(100);  // Запускаем таймер
             update();               // Перерисовка для удаления стартового текста
+            emit keyPressed(event);
         }
         return;
     } else {
@@ -86,7 +75,6 @@ void BrickGame::keyPressEvent(QKeyEvent* event) {
     }
 }
 
-
 void BrickGame::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
@@ -95,15 +83,12 @@ void BrickGame::paintEvent(QPaintEvent *event) {
     // Если игра не началась, отображаем экран начала игры
     if (!isGameStarted) {
         drawStartScreen(painter);
-        return;
-    }
-    // Если игра на паузе, отображаем экран паузы
-    if (game_info.pause == 1) {
+    } else if (game_info.pause == 1) {
         drawPausedScreen(painter);
-        return;
+    } else {
+        drawGameField(painter);
+        drawNextTetramino(painter);
     }
-    // Если игра идет, отрисовываем игровое поле
-    drawGameField(painter);
 }
 
 void BrickGame::drawStartScreen(QPainter& painter) {
@@ -154,6 +139,35 @@ void BrickGame::drawGameField(QPainter& painter) {
         }
     }
 }
+
+void BrickGame::drawNextTetramino(QPainter& painter) {
+    if (!nextTetrominoFrame) return;
+
+    auto game_info = tetris.updateCurrentState();
+    QRect frameRect = nextTetrominoFrame->geometry();  // Границы фрейма
+    QRect secondRect = statsFrame->geometry();  // Границы фрейма
+    int miniCellSize = frameRect.width() / 4;          // Размер ячейки в поле 4x4
+
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::NoBrush);
+
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            QRect cellRect(
+                frameRect.x() + secondRect.x() + col * miniCellSize,
+                frameRect.y() + secondRect.y() + row * miniCellSize,
+                miniCellSize,
+                miniCellSize);
+            painter.drawRect(cellRect);
+            
+            if (game_info.next[row][col] == 1) {
+                painter.fillRect(cellRect, Qt::red);
+                painter.fillRect(cellRect, Qt::green);
+            }
+        }
+    }
+}
+
 
 void BrickGame::updateGame() {
     Tetris_t tetris_info = tetris.GetTetrisInfo();

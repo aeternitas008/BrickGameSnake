@@ -26,7 +26,8 @@ protected:
     void drawGameField(QPainter& painter);
     void drawPausedScreen(QPainter& painter);
     void drawStartScreen(QPainter& painter);
-
+    
+    void drawNextTetramino(QPainter& painter);
 private:
     Tetris& tetris;  // Ссылка на объект Tetris
 
