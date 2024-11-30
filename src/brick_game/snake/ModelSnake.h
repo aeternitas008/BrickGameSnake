@@ -8,7 +8,8 @@
 #include <deque>
 #include <cstdio>
 
-#include "../defines.hpp"
+#include "../defines.h"
+#include "../tetris/ModelTetris.h"
 
 /**
  * @file main.h Файл имеет основные функции по реализации игры, а именно
@@ -39,7 +40,7 @@ struct SnakeInfo_t {
   State_t state; /**< Текущее состояние игры */
 };
 
-class Snake {
+class Snake{
   private:
   static inline GameInfo_t* game_info_;
   static inline SnakeInfo_t* snake_info_;
@@ -52,6 +53,7 @@ class Snake {
   int IsCollision(Position_t point);
   int IsEating(Position_t new_point);
   int IsBodySnake(Position_t point);
+  void SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info);
 
   public:
 
@@ -61,8 +63,10 @@ class Snake {
       return snake_info_->state; 
   }
   
-  static GameInfo_t updateCurrentState() {
-    return *game_info_;
+  GameInfo_t updateCurrentState() {
+    GameInfo_t game = *game_info_;
+    SumSnake(&game, *snake_info_);
+    return game;
   }
 
   static SnakeInfo_t GetSnakeInfo() {

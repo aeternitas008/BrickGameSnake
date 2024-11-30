@@ -2,7 +2,7 @@
 #define TETRIS_CONTROLLER_H
 
 #include "../../brick_game/tetris/ModelTetris.h"
-#include "InputHandler.h"
+#include "../../brick_game/InputHandler.h"
 #include "BrickGame.h"
 
 class TetrisController : public QObject {

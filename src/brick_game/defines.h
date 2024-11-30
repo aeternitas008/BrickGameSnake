@@ -29,8 +29,8 @@
 #define MAX_LVL 10
 #define BASE_DELAY_TTR 800
 #define BASE_DELAY_SNK 400
-#define SCORE_FILE_SNK "brick_game/snake/score.txt"
-#define SCORE_FILE_TTR "brick_game/tetris/score.txt"
+#define SCORE_FILE_SNK "score.txt"
+#define SCORE_FILE_TTR "score.txt"
 #define INITIAL_TIMEOUT 40
 
 #define NOSIG 8

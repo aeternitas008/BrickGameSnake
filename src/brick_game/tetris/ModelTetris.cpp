@@ -32,7 +32,6 @@ void Tetris::GetPseudoRandomTypeTetramino() {
 void Tetris::StartGame() {
   tetris_->state = SPAWN;
   // qDebug() << "start -> spawn ";
-
 }
 
 void Tetris::GetFigure(Tetramino_t *tetramino) {
@@ -349,6 +348,17 @@ void Tetris::userInput(UserAction_t signal, bool hold) {
   // Если действие определено, вызываем его для текущего объекта
   if (act) {
     (this->*act)();  // Вызов метода через указатель на метод для текущего объекта
+  }
+}
+
+void Tetris::SumTetris(GameInfo_t *game_info, Tetramino_t tetramino) {
+  for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 4; y++) {
+      if (tetramino.figure[x][y] == 1) {
+        game_info->field[tetramino.point->x + x]
+                        [tetramino.point->y + y] = 1;
+      }
+    }
   }
 }
 

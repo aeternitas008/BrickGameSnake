@@ -60,7 +60,8 @@ int main(int argc, char *argv[]) {
         SnakeController snake_controller(&input, &view);
         snake_controller.GameLoop();  // Запускаем цикл игры
     } else if (gameChoice == "tetris") {
-        GameLoopTetris(&view);  // Запускаем цикл игры
+        TetrisController tetris_controller(&input, &view);
+        tetris_controller.GameLoop();  // Запускаем цикл игры
     } else {
         std::cout << "Unknown game: " << gameChoice << "\n";
         return 1;

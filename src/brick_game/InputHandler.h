@@ -2,16 +2,14 @@
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
-// #ifdef QT_USE
+#include "defines.h"
 #include <QKeyEvent>
-// #endif
 
-#include "defines.hpp"
-#include <ncurses.h>
 
-// enum class UserAction_t {
-//     Nosig, Start, Pause, Terminate, Left, Right, Up, Down, Action
-// };
+#define KEY_DOWN 0402
+#define KEY_UP 0403
+#define KEY_LEFT 0404
+#define KEY_RIGHT 0405
 
 class InputHandler {
 public:
@@ -45,6 +43,7 @@ public:
         case Qt::Key_Down:
         case KEY_DOWN:
             signal =  Down;
+            break;
         case Qt::Key_Space:
             signal =  Action;
             break;

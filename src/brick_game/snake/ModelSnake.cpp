@@ -1,5 +1,17 @@
 #include "ModelSnake.h"
-#include "../defines.hpp"
+#include "../defines.h"
+
+void Snake::SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info) {
+    int x, y;
+    for (int i = 0; i < snake_info.snake->points.size(); i++) {
+        x = snake_info.snake->points[i].x;
+        y = snake_info.snake->points[i].y;
+        game_info->field[x][y] = 1;
+    }
+    x = snake_info.apple->x;
+    y = snake_info.apple->y;
+    game_info->field[x][y] = 2;  // для отображения другим цветом
+}
 
 int Snake::IsBodySnake(Position_t point) {
   int result = 0;

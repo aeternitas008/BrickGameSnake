@@ -24,7 +24,7 @@ SOURCES += \
 HEADERS += \
     brick_game/snake/ModelSnake.h \
     brick_game/snake/ControllerSnake.h \
-    brick_game/defines.hpp \
+    brick_game/defines.h \
     gui/desktop/GameWindow.hpp \
     gui/desktop/QtView.h \
     gui/ViewInterface.h \

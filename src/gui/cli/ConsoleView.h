@@ -9,7 +9,7 @@
 #undef border
 #include <cstdio>
 
-#include "../../brick_game/defines.hpp"
+#include "../../brick_game/defines.h"
 #include "../ViewInterface.h"
 
 class ConsoleView : public ViewInterface {

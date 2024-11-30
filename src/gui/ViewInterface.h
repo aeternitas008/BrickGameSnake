@@ -2,7 +2,7 @@
 #ifndef VIEWINTERFACE_H
 #define VIEWINTERFACE_H
 
-#include "../brick_game/defines.hpp"  // Структуры данных вашей игры
+#include "../brick_game/defines.h"  // Структуры данных вашей игры
 
 class ViewInterface {
 public:

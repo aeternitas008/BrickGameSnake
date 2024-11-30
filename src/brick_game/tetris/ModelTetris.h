@@ -7,8 +7,9 @@
 #include <time.h>
 #include <array>
 #include <cstdio>
-#include "../defines.hpp"
-#include <QDebug>
+#include "../defines.h"
+// #include <QDebug>
+
 /**
  * @file main.h Файл имеет основные функции по реализации игры, а именно
  * чтение и обработку ключей, перемещение тетромино по полю и реализацию базовой
@@ -92,6 +93,8 @@ class Tetris {
   int CheckNewVariant();
   int CheckTetramino(Tetramino_t tetramino);
 
+  void SumTetris(GameInfo_t *game_info, Tetramino_t tetramino);
+
   /**
    * @brief Заполняет текущую фигуру тетрамино на основе его типа и варианта.
    *
@@ -119,28 +122,10 @@ class Tetris {
       tetris_->tetramino->last_tetramino = {-1, -1, -1, -1};
       GetPseudoRandomTypeTetramino();
       tetris_->tetramino->variant = 0;
-      qDebug() << "Entering updateGame";
-      qDebug() << "state " << tetris_->state;
+      // qDebug() << "Entering updateGame";
+      // qDebug() << "state " << tetris_->state;
     }
   }
-
-  // ~Tetris() {
-  //   if (game_info_) {
-  //     if (game_info_->tetramino->point) {
-  //     delete game_info_->tetramino->point;
-  //     game_info_->tetramino->point = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //     if (game_info_->tetramino) {
-  //     delete game_info_->tetramino;
-  //     game_info_->tetramino = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //     if (game_info_->time) {
-  //     delete game_info_->time;
-  //     game_info_->time = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //   delete game_info_;  // Освобождаем память для game_info
-  //   }
-  // }
 
   State_t GetState() {
       return tetris_->state; 
@@ -160,8 +145,11 @@ class Tetris {
    *
    * @return Указатель на структуру GameInfo_t.
    */
-  static GameInfo_t updateCurrentState() {
-    return *game_info_;
+
+  GameInfo_t updateCurrentState() {
+    GameInfo_t game = *game_info_;
+    SumTetris(&game, *tetris_->tetramino);
+    return game;
   }
 
   void StartGame();

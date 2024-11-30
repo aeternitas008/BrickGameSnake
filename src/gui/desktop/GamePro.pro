@@ -22,5 +22,5 @@ SOURCES += main1.cpp \
 HEADERS += BrickGame.h \
            ../../brick_game/tetris/ModelTetris.h \
            ../../brick_game/tetris/ControllerTetris.h \
-           InputHandler.h \
+           ../../brick_game/InputHandler.h \
            TetrisController.h \

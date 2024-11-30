@@ -63,7 +63,7 @@ void BrickGame::keyPressEvent(QKeyEvent* event) {
         }
         return;
     } else {
-        GameInfo_t game_info = Tetris::updateCurrentState();
+        GameInfo_t game_info = tetris.updateCurrentState();
         if (game_info.pause == 1) {
             if (event->key() == Qt::Key_P || event->key() == Qt::Key_Escape) {
                 emit keyPressed(event);  // Обрабатываем только Pause и Exit
@@ -175,7 +175,7 @@ void BrickGame::updateGame() {
     
     qDebug() << "really update game";
     // Проверяем на паузу
-    GameInfo_t game_info = Tetris::updateCurrentState();
+    GameInfo_t game_info = tetris.updateCurrentState();
     if (game_info.pause == 1) {
         // Логика отображения паузы
         return;
