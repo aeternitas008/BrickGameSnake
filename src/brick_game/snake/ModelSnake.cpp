@@ -51,7 +51,6 @@ int Snake::IsCollision(Position_t point) {
 
 int Snake::IsEating(Position_t new_point) {
   int result = 0;
-  Snake_t *snake = snake_info_->snake;
   if (snake_info_->apple->x == new_point.x && snake_info_->apple->y == new_point.y) result = 1;
   return result;
 }

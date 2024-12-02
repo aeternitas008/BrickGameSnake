@@ -1,3 +1,4 @@
+// #pragma once
 // InputHandler.h
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
@@ -13,6 +14,8 @@
 
 class InputHandler {
 public:
+    //maybe
+    InputHandler() = default;
     UserAction_t GetSignal(int key) {
         UserAction_t signal = Nosig;
         switch (key) {

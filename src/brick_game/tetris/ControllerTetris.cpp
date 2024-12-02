@@ -27,7 +27,6 @@ void TetrisController::GameLoop() {
           if (signal == UserAction_t::Pause) {
               view->ClearPause();
               tetris.GamePause();
-              // tetris.GameResume();
           }
       }
 

@@ -17,41 +17,46 @@ class BrickGame : public QWidget {
     Q_OBJECT
 
 public:
-    explicit BrickGame(Tetris& tetrisInstance,  QWidget* parent = nullptr);
-    QTimer* getGameTimer() const { return gameTimer; }
-    void showGameOver();
+    explicit BrickGame(QWidget* parent = nullptr);
+    
+    void updateGame(const GameInfo_t& game_info, State_t state);
+    void setGameInfo(const GameInfo_t& game_info) {
+        currentGameInfo = game_info;
+    }
+    void showGameOver(const GameInfo_t& game_info);
+    void showGameWin(const GameInfo_t& game_info);
+
+    bool isPaused = false;
+    bool isGameStarted = false;
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
-    void drawGameField(QPainter& painter);
-    void drawPausedScreen(QPainter& painter);
-    void drawStartScreen(QPainter& painter);
-    
-    void drawNextTetramino(QPainter& painter);
-private:
-    Tetris& tetris;  // Ссылка на объект Tetris
-    // Snake& snake;
-
-private slots:
-    void updateGame();
 
 signals:
     void keyPressed(QKeyEvent* event);
 
+
 private:
-    QFrame *gameBoardFrame;
-    QFrame *statsFrame;
-    QFrame *nextTetrominoFrame;
+    GameInfo_t currentGameInfo; // Текущая информация о состоянии игры
 
-    QLabel *highScoreLabel;
-    QLabel *scoreLabel;
-    QLabel *levelLabel;
-    QLabel *speedLabel;
-    QTimer *gameTimer;
+    void updateStats(const GameInfo_t& game_info);
+    void drawGameField(QPainter& painter, const GameInfo_t& game_info);
+    void drawNextTetramino(QPainter& painter, const GameInfo_t& game_info);
+    void drawPausedScreen(QPainter& painter);
+    void drawStartScreen(QPainter& painter);
 
-    bool isGameStarted = false;  // Флаг состояния игры
-    void updateStats();  // Обновление статистики на экране
+
+    QFrame* gameBoardFrame;
+    QFrame* statsFrame;
+    QFrame* nextTetrominoFrame;
+
+    QLabel* highScoreLabel;
+    QLabel* scoreLabel;
+    QLabel* levelLabel;
+    QLabel* speedLabel;
+    QTimer* gameTimer;
+
 };
 
 #endif // TETRISGAME_H

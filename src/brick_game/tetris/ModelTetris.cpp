@@ -13,7 +13,7 @@ bool Tetris::isUnique(int tetramino, const std::array<int, 4>& last_tetraminos) 
 // Функция для добавления нового тетрамино в массив
 void Tetris::AddTypeTetramino(int tetramino) {
 std::array<int, 4>& last_tetraminos = tetris_->tetramino->last_tetramino;
-  for (int i = 1; i < last_tetraminos.size(); i++) {
+  for (unsigned long i = 1; i < last_tetraminos.size(); i++) {
       last_tetraminos[i - 1] = last_tetraminos[i];
   }
   last_tetraminos.back() = tetramino;
@@ -168,7 +168,6 @@ void Tetris::CheckLines(int *count) {
       }
     }
   }
-  // qDebug() << "ok check line";
 }
 
 void Tetris::NewStatsSaveInit() {
@@ -191,7 +190,6 @@ void Tetris::Check() {
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_TTR + 1;
     game_info_->speed = game_info_->level;
 
-  // qDebug() << "ok check line";
   NewStatsSaveInit();
   // delete?
   if (tetris_->state != SPAWN) {
