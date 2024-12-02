@@ -1,5 +1,5 @@
 # Имя основного Makefile
-all: build-qt
+all: build-qt build-console
 
 # Команды для сборки QtGame
 build-qt:
