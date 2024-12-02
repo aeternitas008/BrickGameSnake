@@ -40,8 +40,6 @@ void TetrisController::handleKeyPress(QKeyEvent* event) {
 
         // Передаем действие в модель и обновляем отображение
         tetris.userInput(action, hold);
-
-        qDebug() << "i am here" << tetris.GetTetrisInfo().state << "\naction: " << action << "\n info: " << tetris.updateCurrentState().field[19][4];
         updateView();
     }
 }
