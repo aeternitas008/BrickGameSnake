@@ -35,7 +35,6 @@ private:
     // Состояние игры
     bool isGameStarted = false;
     bool isPaused = false;
-    GameInfo_t currentGameInfo;
 
     // Интерфейс
     QFrame* gameBoardFrame;
@@ -60,7 +59,6 @@ private:
     void showGameOver(const GameInfo_t& game_info);
     void showGameWin(const GameInfo_t& game_info);
     void showMessage(const QString& title, const QString& message);
-    void setGameInfo(const GameInfo_t& game_info) { currentGameInfo = game_info; }
     void updateGeometryCache() { nextTetrominoRect = nextTetrominoFrame->geometry(); }
 };
 

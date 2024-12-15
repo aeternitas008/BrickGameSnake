@@ -3,7 +3,7 @@
 BrickGame::BrickGame(Game& game, QWidget* parent)
     : QWidget(parent), game(game), inputHandler(new InputHandler()) {
     setFixedSize(510, 580);
-
+    setFocusPolicy(Qt::StrongFocus);
     // Устанавливаем основной макет
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
@@ -45,7 +45,8 @@ BrickGame::BrickGame(Game& game, QWidget* parent)
     connect(gameTimer, &QTimer::timeout, this, &BrickGame::updateGame);
 
     updateGeometryCache();
-    setFocusPolicy(Qt::StrongFocus);
+    gameTimer->setInterval(150);
+    gameTimer->start();
 }
 
 void BrickGame::pauseGame() {
@@ -61,22 +62,18 @@ void BrickGame::pauseGame() {
 void BrickGame::keyPressEvent(QKeyEvent* event) {
     if (!isGameStarted) {
         if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-            gameTimer->start(150);
             isGameStarted = true;
         }
     }
-
     if (event->key() == Qt::Key_P) {
         pauseGame();
     }
-
     if (!isPaused) {
         UserAction_t action = inputHandler->GetSignal(event->key());
         int hold = (action == Down) ? 1 : 0;
+        qDebug() << "debug" << action;
         game.userInput(action, hold);
-        updateGame();
     }
-    
 }
 
 void BrickGame::updateGame() {
@@ -95,7 +92,6 @@ void BrickGame::updateGame() {
         return;
     }
 
-    setGameInfo(game_info);
     updateStats(game_info);
     update();
 }
@@ -111,8 +107,9 @@ void BrickGame::paintEvent(QPaintEvent* event) {
     } else if (isPaused) {
         drawPausedScreen(painter);
     } else {
-        drawGameField(painter, currentGameInfo);
-        drawNextTetramino(painter, currentGameInfo);
+        GameInfo_t game_info = game.updateCurrentState();
+        drawGameField(painter, game_info);
+        drawNextTetramino(painter, game_info);
     }
 }
 
