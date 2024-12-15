@@ -6,7 +6,6 @@
 #include "defines.h"
 #include <QKeyEvent>
 
-
 #define KEY_DOWN 0402
 #define KEY_UP 0403
 #define KEY_LEFT 0404

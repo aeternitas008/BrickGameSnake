@@ -14,15 +14,14 @@ DESTDIR = $$PWD/../bin/
 TARGET = consoleGame
 
 SOURCES += consoleMain.cpp \
-           ../brick_game/snake/ControllerSnake.cpp \
+           ../brick_game/GameController.cpp \
            ../brick_game/snake/ModelSnake.cpp \
-           ../brick_game/tetris/ControllerTetris.cpp \
            ../brick_game/tetris/ModelTetris.cpp \
            ../gui/cli/ConsoleView.cpp \
 
-HEADERS += ../brick_game/snake/ControllerSnake.h \
+HEADERS += ../brick_game/GameController.h \
            ../brick_game/snake/ModelSnake.h \
-           ../brick_game/tetris/ControllerTetris.h \
            ../brick_game/tetris/ModelTetris.h \
            ../gui/cli/ConsoleView.h \
            ../gui/ViewInterface.h
+           ../brick_game/Game.h \

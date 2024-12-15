@@ -8,19 +8,8 @@
 #include <deque>
 #include <cstdio>
 
-#include "../defines.h"
-#include "../tetris/ModelTetris.h"
+#include "../Game.h"
 
-/**
- * @file main.h Файл имеет основные функции по реализации игры, а именно
- * чтение и обработку ключей, перемещение тетромино по полю и реализацию базовой
- * механики игры.
- *
- */
-
-/**
- * @brief Перечисление направлений движения змейки.
- */
 enum Direction_t {
   UP_DIRECTION = 0, /**< Начало игры */
   RIGHT_DIRECTION,    /**< Фигура движется */
@@ -29,87 +18,42 @@ enum Direction_t {
 };
 
 struct Snake_t {
-  std::deque<Position_t> points; /**< Координаты точек змейки */
-  Direction_t direction; /**< Направление движения змейки (0-3) */
+  std::deque<Position_t> points = {
+    {SNAKE_START_X, SNAKE_START_Y},
+    {SNAKE_START_X, SNAKE_START_Y + 1},
+    {SNAKE_START_X, SNAKE_START_Y + 2},
+    {SNAKE_START_X, SNAKE_START_Y + 3}
+  }; /**< Координаты точек змейки */
+  Direction_t direction = LEFT_DIRECTION; /**< Направление движения змейки (0-3) */
 };
 
 struct SnakeInfo_t {
   struct timespec *time; /**< Указатель на структуру времени */
   Snake_t *snake; /**< Указатель на змейку */
   Position_t *apple; /**< Указатель на позицию яблока */
-  State_t state; /**< Текущее состояние игры */
 };
 
-class Snake{
+class Snake : public Game {
   private:
   static inline GameInfo_t* game_info_;
   static inline SnakeInfo_t* snake_info_;
 
-  void NewStatsSaveInit();
-  void StatsInit();
-  void SnakePosInit();
+  // @todo
+  void NewStatsSaveInit() {
+    StatsSave(SCORE_FILE_TTR);
+  };
+
+  // @todo
+  void StatsInit() override {
+    ReadHighScore(SCORE_FILE_TTR);
+  };
+
   void GetRandomCoordiantes();
-  void InitBoard();
   int IsCollision(Position_t point);
   int IsEating(Position_t new_point);
   int IsBodySnake(Position_t point);
   void SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info);
 
-  public:
-
-  void userInput(UserAction_t signal, bool hold);
-
-  State_t GetState() {
-      return snake_info_->state; 
-  }
-  
-  GameInfo_t updateCurrentState() {
-    GameInfo_t game = *game_info_;
-    SumSnake(&game, *snake_info_);
-    return game;
-  }
-
-  static SnakeInfo_t GetSnakeInfo() {
-    return *snake_info_;
-  }
-
-  Snake() {
-    if (!game_info_) {
-      game_info_ = new GameInfo_t;
-      snake_info_ = new SnakeInfo_t;
-      snake_info_->time = new timespec;
-      snake_info_->snake = new Snake_t;
-      snake_info_->apple = new Position_t;
-      snake_info_->snake->direction = LEFT_DIRECTION;
-      game_info_->pause = 0;
-    // Инициализируем статический указатель, если он ещё не инициализирован
-      snake_info_->state = START;
-      InitBoard();
-      SnakePosInit();
-      GetRandomCoordiantes();
-      StatsInit();
-    }
-  }
-
-  // ~Snake() {
-  //   if (game_info_) {
-  //     if (game_info_->snake->point) {
-  //     delete game_info_->snake->point;
-  //     game_info_->snake->point = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //     if (game_info_->snake) {
-  //     delete game_info_->snake;
-  //     game_info_->snake = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //     if (game_info_->time) {
-  //     delete game_info_->time;
-  //     game_info_->time = nullptr;  // Установите указатель в null после удаления
-  //   }
-  //   delete game_info_;  // Освобождаем память для game_info
-  //   }
-  // }
-
-  void StartGame();
   void Spawn();
   void Shifting();
   void MoveUp();
@@ -118,15 +62,42 @@ class Snake{
   void MoveDown();
   void MoveLeft();
   void Check();
-  int Offset(struct timespec last_time, struct timespec current_time);
-  
-  void GameOver() {
-    snake_info_->state = EXIT_STATE;
-  }
+
   void GamePause() {
-    game_info_->pause = (game_info_->pause == 0);
+      game_info_->pause = !game_info_->pause;
   }
-  void ExitState() { snake_info_->state = EXIT_STATE; }
+
+  void GameOver() {
+      game_info_->state = EXIT_STATE;
+  }
+
+  void ExitState() {
+      game_info_->state = EXIT_STATE;
+
+  }
+
+  public:
+
+  void StartGame() override;
+  void userInput(UserAction_t signal, bool hold) override;
+  
+  GameInfo_t updateCurrentState() override {
+    GameInfo_t game = *game_info_;
+    SumSnake(&game, *snake_info_);
+    return game;
+  }
+
+  Snake() : Game()  {
+    if (!game_info_) {
+      game_info_ = new GameInfo_t;
+      snake_info_ = new SnakeInfo_t;
+      snake_info_->time = new timespec;
+      snake_info_->snake = new Snake_t;
+      snake_info_->apple = new Position_t;
+      GetRandomCoordiantes();
+      StatsInit();
+    }
+  }
 };
 
 #endif //SNAKE_H
