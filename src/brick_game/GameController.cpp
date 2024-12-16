@@ -2,7 +2,7 @@
 
 void GameController::GameLoop() {
     GameInfo_t game_info;
-    view->DisplayOverlay();
+    view->PrintOverlay();
 
     while (no_break) {
         game_info = game.updateCurrentState();  // Получаем текущее состояние игры
@@ -14,10 +14,10 @@ void GameController::GameLoop() {
         }
 
         if (game_info.state == START && signal == UserAction_t::Start)
-            view->DisplayField();
+            view->PrintField();
 
         if (game_info.pause) {
-            view->DisplayPause();
+            view->PrintPause();
             if (signal == UserAction_t::Pause) {
                 view->ClearPause();
                 game.userInput(signal, 0);
@@ -29,12 +29,12 @@ void GameController::GameLoop() {
         }
 
         if (game_info.score == 200 && dynamic_cast<Snake*>(&game)) {
-            view->DisplayGameWin();  // Победа
+            view->PrintGameWin();  // Победа
             no_break = false;
         }
 
         if (game_info.state == GAMEOVER) {
-            view->DisplayGameOver(game_info);  // Конец игры
+            view->PrintGameOver(game_info);  // Конец игры
             no_break = false;
         }
 

@@ -10,53 +10,22 @@
 #include <cstdio>
 
 #include "../../brick_game/defines.h"
-#include "../ViewInterface.h"
 
-class ConsoleView : public ViewInterface {
-private:
+class ConsoleView {
+public:
     void PrintBoard(int[ROWS_MAP][COLS_MAP]);
     void PrintStats(GameInfo_t);
     void PrintPause();
-    void HidePause();
+    void ClearPause();
     void PrintGameOver(GameInfo_t);
     void PrintGameWin();
     void PrintOverlay();
     void PrintNextTetramino(int figure[4][4]);
-
     void PrintField();
-public:
-    void UpdateView(GameInfo_t game_info) override {
+
+    void UpdateView(GameInfo_t game_info) {
         PrintBoard(game_info.field);
         PrintStats(game_info);
-    }
-
-    void DisplayPause() override {
-        PrintPause();
-    }
-
-    void ClearPause() override {
-        HidePause();
-    }
-
-    void DisplayGameOver(const GameInfo_t &gameInfo) override {
-        PrintGameOver(gameInfo);
-    }
-
-    void DisplayGameWin() override {
-        PrintGameWin();
-    }
-
-    void DisplayOverlay() override {
-        PrintOverlay();
-    }
-
-    void DisplayNextTetramino(GameInfo_t gameInfo) override {
-        PrintNextTetramino(gameInfo.next);
-    }
-
-
-    void DisplayField() override {
-        PrintField();
     }
 };
 

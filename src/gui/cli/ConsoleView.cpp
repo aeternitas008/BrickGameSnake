@@ -75,7 +75,7 @@ void ConsoleView::PrintPause() {
 /**
  * @brief Очищает сообщение о паузе с экрана.
  */
-void ConsoleView::HidePause() {
+void ConsoleView::ClearPause() {
   MVPRINTW(1, 2, "                            ");
   MVPRINTW(2, 8, "              ");
 }

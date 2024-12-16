@@ -9,13 +9,13 @@
 
 class GameController {
 public:
-    GameController(ViewInterface* view, Game& game) 
+    GameController(ConsoleView* view, Game& game) 
         : view(view), game(game), no_break(true) {}
 
     void GameLoop();
 
 private:
-    ViewInterface* view;          // Интерфейс отображения
+    ConsoleView* view;          // Интерфейс отображения
     InputHandler* input_handler;          // Интерфейс отображения
     Game& game;
     bool no_break;
