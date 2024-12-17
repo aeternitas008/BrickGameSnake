@@ -1,16 +1,14 @@
 #include "ModelTetris.h"
 
-// Функция для проверки уникальности тетрамино в последних 4
 bool Tetris::isUnique(int tetramino, const std::array<int, 4>& last_tetraminos) {
   for (const auto& t : last_tetraminos) {
       if (tetramino == t) {
-          return false;  // Найдено совпадение
+          return false;
       }
   }
-  return true;  // Совпадений нет
+  return true;
 }
 
-// Функция для добавления нового тетрамино в массив
 void Tetris::AddTypeTetramino(int tetramino) {
 std::array<int, 4>& last_tetraminos = tetris_->tetramino->last_tetramino;
   for (unsigned long i = 1; i < last_tetraminos.size(); i++) {
@@ -27,7 +25,6 @@ void Tetris::GetPseudoRandomTypeTetramino() {
   AddTypeTetramino(tetramino);
   tetris_->tetramino->next_type = tetramino;
 }
-
 
 void Tetris::StartGame() {
   clock_gettime(CLOCK_REALTIME, tetris_->time);
@@ -276,9 +273,7 @@ void Tetris::userInput(UserAction_t signal, bool hold) {
       { &Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
       { &Tetris::Check, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check },
   };
-  // Определяем указатель на метод
   action act = nullptr;
-  // Логика выбора действия в зависимости от текущего состояния змейки
   tetris_->hold = hold;
   if (game_info_->state != MOVING && game_info_->state != START) {
     act = fsm_simple[game_info_->state];
@@ -286,9 +281,8 @@ void Tetris::userInput(UserAction_t signal, bool hold) {
     int state = (game_info_->state == MOVING) ? 1 : 0;
     act = fsm_table[state][signal];
   }
-  // Если действие определено, вызываем его для текущего объекта
   if (act) {
-    (this->*act)();  // Вызов метода через указатель на метод для текущего объекта
+    (this->*act)();
   }
 }
 

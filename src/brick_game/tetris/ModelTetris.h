@@ -52,9 +52,34 @@ static const unsigned int TETRAMINO_FIGURES[19][4][4] = {
 };
 
 class Tetris : public Game {
+
+  friend class TetrisTest;
+  
   private:
   static inline Tetris_t* tetris_;
 
+  public:
+  Tetris() : Game() {
+    if (!tetris_) {
+      tetris_ = new Tetris_t;
+      tetris_->tetramino = new Tetramino_t;
+      tetris_->tetramino->point = new Position_t;
+      tetris_->time = new timespec;
+      StatsInit();
+      GetPseudoRandomTypeTetramino();
+    }
+  }
+
+  void userInput(UserAction_t signal, bool hold) override;
+
+  GameInfo_t updateCurrentState() override {
+    GameInfo_t game = *game_info_;
+    SumTetris(&game, *tetris_->tetramino);
+    return game;
+  }
+
+  // Для тестов
+  void StartGame();
   void AddTypeTetramino(int tetramino);
   bool isUnique(int tetramino, const std::array<int, 4>& last_tetraminos);
   void GetPseudoRandomTypeTetramino();
@@ -71,7 +96,7 @@ class Tetris : public Game {
   void NewStatsSaveInit() {
     StatsSave(SCORE_FILE_TTR);
   };
-  
+
   void StatsInit() override {
     ReadHighScore(SCORE_FILE_TTR);
   };
@@ -105,29 +130,10 @@ class Tetris : public Game {
 
   }
 
-  friend class SnakeTest;
-
-  public:
-  Tetris() : Game() {
-    // Инициализируем статический указатель, если он ещё не инициализирован
-    if (!tetris_) {
-      tetris_ = new Tetris_t;
-      tetris_->tetramino = new Tetramino_t;
-      tetris_->tetramino->point = new Position_t;
-      tetris_->time = new timespec;
-      StatsInit();
-      GetPseudoRandomTypeTetramino();
-    }
+  Tetris_t getTetrisInfo() {
+    return *tetris_;
   }
 
-  void StartGame() override;
-  void userInput(UserAction_t signal, bool hold) override;
-
-  GameInfo_t updateCurrentState() override {
-    GameInfo_t game = *game_info_;
-    SumTetris(&game, *tetris_->tetramino);
-    return game;
-  }
 };
 
 #endif

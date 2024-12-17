@@ -7,7 +7,7 @@ class Game {
 protected:
     static inline GameInfo_t* game_info_;
 
-    virtual void StatsInit() = 0; // Абстрактный метод для инициализации статистики
+    virtual void StatsInit() = 0;
 
     int Offset(struct timespec last_time, struct timespec current_time) {
         return (current_time.tv_sec - last_time.tv_sec) * 1000 +
@@ -22,7 +22,6 @@ public:
         }
     }
 
-    virtual void StartGame() = 0; // Абстрактный метод для начала игры
     virtual void userInput(UserAction_t signal, bool hold) = 0;
 
     virtual GameInfo_t updateCurrentState() {

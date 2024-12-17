@@ -3,7 +3,7 @@
 
 void Snake::SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info) {
     int x, y;
-    for (int i = 0; i < snake_info.snake->points.size(); i++) {
+    for (unsigned long i = 0; i < snake_info.snake->points.size(); i++) {
         x = snake_info.snake->points[i].x;
         y = snake_info.snake->points[i].y;
         game_info->field[x][y] = 1;
@@ -127,25 +127,21 @@ void Snake::MoveForward() {
 }
 
 void Snake::userInput(UserAction_t signal, bool hold) {
-  // Определяем тип указателя на метод класса Snake
   typedef void (Snake::*action)();
-  // Машины состояний с указателями на методы класса Snake
   action fsm_simple[6] = { nullptr, &Snake::Spawn, nullptr, &Snake::Shifting, &Snake::GameOver, &Snake::ExitState };
   action fsm_table[2][9] = {
       { &Snake::StartGame, nullptr, &Snake::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
       { &Snake::Check, &Snake::GamePause, &Snake::ExitState, &Snake::MoveLeft, &Snake::MoveRight, &Snake::MoveUp, &Snake::MoveDown, nullptr, &Snake::Check },
   };
-  // Определяем указатель на метод
   action act = nullptr;
-  // Логика выбора действия в зависимости от текущего состояния змейки
   if (game_info_->state != MOVING && game_info_->state != START) {
     act = fsm_simple[game_info_->state];
   } else {
     int state = (game_info_->state == MOVING) ? 1 : 0;
     act = fsm_table[state][signal];
   }
-  // Если действие определено, вызываем его для текущего объекта
   if (act) {
-    (this->*act)();  // Вызов метода через указатель на метод для текущего объекта
+    (this->*act)();
   }
+  hold = !hold;
 }

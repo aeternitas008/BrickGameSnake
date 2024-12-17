@@ -7,10 +7,7 @@
 #include <time.h>
 #include <deque>
 #include <cstdio>
-
 #include "../Game.h"
-
-#include <gtest/gtest_prod.h>
 
 enum Direction_t {
   UP_DIRECTION = 0, /**< Начало игры */
@@ -36,9 +33,35 @@ struct SnakeInfo_t {
 };
 
 class Snake : public Game {
+
+  friend class SnakeTest;
+
   private:
   static inline SnakeInfo_t* snake_info_;
 
+  public:
+
+  void StartGame();
+  void userInput(UserAction_t signal, bool hold) override;
+  
+  GameInfo_t updateCurrentState() override {
+    GameInfo_t game = *game_info_;
+    SumSnake(&game, *snake_info_);
+    return game;
+  }
+
+  Snake() : Game()  {
+    if (!snake_info_) {
+      snake_info_ = new SnakeInfo_t;
+      snake_info_->time = new timespec;
+      snake_info_->snake = new Snake_t;
+      snake_info_->apple = new Position_t;
+      GetRandomCoordiantes();
+      StatsInit();
+    }
+  }
+
+  // Для тестов
   void NewStatsSaveInit() {
     StatsSave(SCORE_FILE_SNK);
   };
@@ -75,31 +98,11 @@ class Snake : public Game {
 
   }
 
-  friend class SnakeTest;
-
-  FRIEND_TEST(SnakeTest, MoveDown);
-  
-  public:
-
-  void StartGame() override;
-  void userInput(UserAction_t signal, bool hold) override;
-  
-  GameInfo_t updateCurrentState() override {
-    GameInfo_t game = *game_info_;
-    SumSnake(&game, *snake_info_);
-    return game;
+  SnakeInfo_t getSnakeInfo() {
+    return *snake_info_;
   }
 
-  Snake() : Game()  {
-    if (!snake_info_) {
-      snake_info_ = new SnakeInfo_t;
-      snake_info_->time = new timespec;
-      snake_info_->snake = new Snake_t;
-      snake_info_->apple = new Position_t;
-      GetRandomCoordiantes();
-      StatsInit();
-    }
-  }
+
 };
 
 #endif //SNAKE_H

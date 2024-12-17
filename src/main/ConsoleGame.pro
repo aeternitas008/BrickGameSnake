@@ -23,5 +23,4 @@ HEADERS += ../brick_game/GameController.h \
            ../brick_game/snake/ModelSnake.h \
            ../brick_game/tetris/ModelTetris.h \
            ../gui/cli/ConsoleView.h \
-           ../gui/ViewInterface.h
            ../brick_game/Game.h \

@@ -20,8 +20,6 @@
 #define MVADDCH(y, x, c) mvaddch(BOARDS_BEGIN + (y), BOARDS_BEGIN + (x), c)
 #define CLEAR_BACKPOS(y, x) mvaddch(BOARDS_BEGIN + (y), BOARDS_BEGIN + (x), ' ')
 
-
-
 #define ROWS_MAP 20
 #define COLS_MAP 10
 #define SCORE_FOR_NXT_LVL_TTR 600
@@ -29,8 +27,8 @@
 #define MAX_LVL 10
 #define BASE_DELAY_TTR 800
 #define BASE_DELAY_SNK 400
-#define SCORE_FILE_SNK "score.txt"
-#define SCORE_FILE_TTR "score.txt"
+#define SCORE_FILE_SNK "scoreSnake.txt"
+#define SCORE_FILE_TTR "scoreTetris.txt"
 #define INITIAL_TIMEOUT 40
 
 #define NOSIG 8
