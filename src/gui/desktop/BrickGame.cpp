@@ -3,7 +3,6 @@
 BrickGame::BrickGame(Game& game, QWidget* parent)
     : QWidget(parent), game(game), inputHandler(new InputHandler()) {
     setFixedSize(510, 580);
-    setFocusPolicy(Qt::StrongFocus);
     // Устанавливаем основной макет
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
@@ -45,7 +44,7 @@ BrickGame::BrickGame(Game& game, QWidget* parent)
     connect(gameTimer, &QTimer::timeout, this, &BrickGame::updateGame);
 
     updateGeometryCache();
-    gameTimer->setInterval(150);
+    gameTimer->setInterval(250);
     gameTimer->start();
 }
 
@@ -71,12 +70,24 @@ void BrickGame::keyPressEvent(QKeyEvent* event) {
     if (!isPaused) {
         UserAction_t action = inputHandler->GetSignal(event->key());
         int hold = (action == Down) ? 1 : 0;
-        qDebug() << "debug" << action;
+        if (action != Nosig) {
+            inputQueue.push(action); // Добавляем команду в очередь
+        }
         game.userInput(action, hold);
     }
 }
 
+int BrickGame::getInterval() {
+    GameInfo_t game_info = game.updateCurrentState();
+    return BASE_DELAY_SNK * pow(0.9, game_info.speed - 1);
+}
+
 void BrickGame::updateGame() {
+    while (!inputQueue.empty()) {
+        UserAction_t action = inputQueue.front();
+        inputQueue.pop();
+        game.userInput(action, (action == Down) ? 1 : 0);
+    }
     game.userInput(Nosig, 0);
     GameInfo_t game_info = game.updateCurrentState();
 
@@ -91,9 +102,9 @@ void BrickGame::updateGame() {
         QApplication::quit();
         return;
     }
-
     updateStats(game_info);
     update();
+    gameTimer->setInterval(getInterval());
 }
 
 void BrickGame::paintEvent(QPaintEvent* event) {

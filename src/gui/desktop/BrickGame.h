@@ -12,6 +12,9 @@
 #include <QPainter>
 #include <QMessageBox>
 #include <QDebug>
+
+#include <queue>
+
 #include "../../brick_game/Game.h"
 #include "../../brick_game/snake/ModelSnake.h"
 #include "../../brick_game/InputHandler.h"
@@ -25,7 +28,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
-
+    int getInterval();
 private:
     // Логика игры
     Game& game;
@@ -60,6 +63,8 @@ private:
     void showGameWin(const GameInfo_t& game_info);
     void showMessage(const QString& title, const QString& message);
     void updateGeometryCache() { nextTetrominoRect = nextTetrominoFrame->geometry(); }
+
+    std::queue<UserAction_t> inputQueue;
 };
 
 #endif // BRICKGAME_H
