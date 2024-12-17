@@ -10,6 +10,8 @@
 
 #include "../Game.h"
 
+#include <gtest/gtest_prod.h>
+
 enum Direction_t {
   UP_DIRECTION = 0, /**< Начало игры */
   RIGHT_DIRECTION,    /**< Фигура движется */
@@ -35,17 +37,14 @@ struct SnakeInfo_t {
 
 class Snake : public Game {
   private:
-  static inline GameInfo_t* game_info_;
   static inline SnakeInfo_t* snake_info_;
 
-  // @todo
   void NewStatsSaveInit() {
-    StatsSave(SCORE_FILE_TTR);
+    StatsSave(SCORE_FILE_SNK);
   };
 
-  // @todo
   void StatsInit() override {
-    ReadHighScore(SCORE_FILE_TTR);
+    ReadHighScore(SCORE_FILE_SNK);
   };
 
   void GetRandomCoordiantes();
@@ -76,6 +75,10 @@ class Snake : public Game {
 
   }
 
+  friend class SnakeTest;
+
+  FRIEND_TEST(SnakeTest, MoveDown);
+  
   public:
 
   void StartGame() override;
@@ -88,8 +91,7 @@ class Snake : public Game {
   }
 
   Snake() : Game()  {
-    if (!game_info_) {
-      game_info_ = new GameInfo_t;
+    if (!snake_info_) {
       snake_info_ = new SnakeInfo_t;
       snake_info_->time = new timespec;
       snake_info_->snake = new Snake_t;

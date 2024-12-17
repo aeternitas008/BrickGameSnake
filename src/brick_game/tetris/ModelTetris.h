@@ -53,7 +53,6 @@ static const unsigned int TETRAMINO_FIGURES[19][4][4] = {
 
 class Tetris : public Game {
   private:
-  static inline GameInfo_t* game_info_;
   static inline Tetris_t* tetris_;
 
   void AddTypeTetramino(int tetramino);
@@ -61,9 +60,6 @@ class Tetris : public Game {
   void GetPseudoRandomTypeTetramino();
   int HasFullLine(int *line);
   void CheckLines(int *count);
-  void NewStatsSaveInit() {
-    StatsSave(SCORE_FILE_TTR);
-  };
   bool CheckFirstLine();
 
   bool IsNotBlockBelow();
@@ -72,9 +68,12 @@ class Tetris : public Game {
 
   void AddTetraminoOnBoard();
 
-  // @todo
+  void NewStatsSaveInit() {
+    StatsSave(SCORE_FILE_TTR);
+  };
+  
   void StatsInit() override {
-    ReadHighScore("score.txt");
+    ReadHighScore(SCORE_FILE_TTR);
   };
 
   void TetraminoPosInit();
@@ -106,11 +105,12 @@ class Tetris : public Game {
 
   }
 
+  friend class SnakeTest;
+
   public:
   Tetris() : Game() {
     // Инициализируем статический указатель, если он ещё не инициализирован
-    if (!game_info_) {
-      game_info_ = new GameInfo_t;
+    if (!tetris_) {
       tetris_ = new Tetris_t;
       tetris_->tetramino = new Tetramino_t;
       tetris_->tetramino->point = new Position_t;

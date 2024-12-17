@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "defines.h"
-#include <QDebug>
 
 class Game {
 protected:
@@ -46,12 +45,12 @@ public:
         }
     }
 
-
     void StatsSave(const char* file_name) {
         if (game_info_->score > game_info_->high_score) {
             game_info_->high_score = game_info_->score;
             FILE *file = fopen(file_name, "w");
-            fprintf(file, "%d", game_info_->score);
+            
+            fprintf(file, "%d", game_info_->high_score);
             fclose(file);
         }
     }

@@ -141,7 +141,6 @@ void Tetris::Check() {
     game_info_->speed = game_info_->level;
 
   NewStatsSaveInit();
-  // delete?
   if (game_info_->state != SPAWN) {
     game_info_->state = SHIFTING;
   }
