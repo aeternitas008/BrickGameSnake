@@ -133,10 +133,10 @@ void Tetris::Check() {
   if (count == 2) game_info_->score += 300;
   if (count == 3) game_info_->score += 700;
   if (count == 4) game_info_->score += 1500;
-  if (game_info_->level < MAX_LVL)
+  if (game_info_->level < MAX_LVL) {
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_TTR + 1;
     game_info_->speed = game_info_->level;
-
+  }
   NewStatsSaveInit();
   if (game_info_->state != SPAWN) {
     game_info_->state = SHIFTING;

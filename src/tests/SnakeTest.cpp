@@ -1,5 +1,5 @@
 #include "../brick_game/snake/ModelSnake.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <deque>
 
 // class Snake;
@@ -9,8 +9,9 @@ class SnakeTest : public ::testing::Test {
     // friend class Snake;
 
 protected:
-    GameInfo_t game_info;
     Snake snake_game;
+    GameInfo_t game_info;
+    SnakeInfo_t snake_info;
     Snake_t snake;
     Position_t apple;
     timespec time;
@@ -116,16 +117,34 @@ TEST_F(SnakeTest, MoveForwardHandlesEatingApple) {
     EXPECT_EQ(game_info.state, SPAWN);
 }
 
+TEST_F(SnakeTest, MoveForward) {
+    snake_game.userInput(Right, false);
+    snake_game.MoveForward();
+    snake_info = snake_game.getSnakeInfo();
+    EXPECT_EQ(snake_info.snake->direction, RIGHT_DIRECTION);
+    EXPECT_EQ(game_info.state, SHIFTING);
+}
+
+TEST_F(SnakeTest, UserInputHandlesMoveLeftAfterRight) {
+    snake_game.userInput(Left, false);
+    snake_info = snake_game.getSnakeInfo();
+    EXPECT_NE(snake_info.snake->direction, LEFT_DIRECTION);
+}
+
+TEST_F(SnakeTest, UserInputHandlesMoveUp) {
+    snake_game.userInput(Up, false);
+    snake_info = snake_game.getSnakeInfo();
+    EXPECT_NE(snake_info.snake->direction, UP_DIRECTION);
+}
+
 TEST_F(SnakeTest, MoveForwardHandlesCollision) {
     snake.points.push_front({5, 6});
     snake_game.MoveForward();
-
+    snake_game.MoveForward();
+    snake_game.MoveForward();
+    snake_game.MoveForward();
+    game_info = snake_game.updateCurrentState();
     EXPECT_EQ(game_info.state, GAMEOVER);
-}
-
-TEST_F(SnakeTest, UserInputHandlesMoveLeft) {
-    snake_game.userInput(UserAction_t::Left, false);
-    EXPECT_EQ(snake.direction, LEFT_DIRECTION);
 }
 
 TEST_F(SnakeTest, UserInputHandlesStartGame) {

@@ -26,7 +26,7 @@
 #define SCORE_FOR_NXT_LVL_SNK 5
 #define MAX_LVL 10
 #define BASE_DELAY_TTR 800
-#define BASE_DELAY_SNK 400
+#define BASE_DELAY_SNK 200
 #define SCORE_FILE_SNK "scoreSnake.txt"
 #define SCORE_FILE_TTR "scoreTetris.txt"
 #define INITIAL_TIMEOUT 40

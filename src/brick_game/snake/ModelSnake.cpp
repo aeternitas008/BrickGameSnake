@@ -70,11 +70,12 @@ void Snake::Shifting() {
 }
 
 void Snake::Check() {
-  if (game_info_->level < MAX_LVL)
+  if (game_info_->level < MAX_LVL) {
     game_info_->level = game_info_->score / SCORE_FOR_NXT_LVL_SNK + 1;
     game_info_->speed = game_info_->level;
     NewStatsSaveInit();
     game_info_->state = SHIFTING;
+  }
 }
 
 void Snake::Spawn() {

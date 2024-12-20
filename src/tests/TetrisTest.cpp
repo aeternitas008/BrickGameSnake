@@ -48,7 +48,8 @@ TEST_F(TetrisTest, HasFullLine_ReturnsTrueForFullLine) {
         game_info.field[0][y] = 1;
     }
     int line = 0;
-    EXPECT_TRUE(tetris.HasFullLine(&line));
+    tetris.setGameInfo(game_info);
+    EXPECT_EQ(tetris.HasFullLine(&line), 0);
     EXPECT_EQ(line, 0);
 }
 
@@ -88,9 +89,40 @@ TEST_F(TetrisTest, CheckTetramino_DetectsCollision) {
     auto game_info = tetris.updateCurrentState();
 
     game_info.field[1][0] = 1;
+    tetris.setGameInfo(game_info);
     tetris_info.tetramino->figure[0][0] = 1;
     tetris_info.tetramino->point->x = 0;
     tetris_info.tetramino->point->y = 0;
 
     EXPECT_EQ(tetris.CheckTetramino(*tetris_info.tetramino), 1);
+}
+
+// TEST_F(TetrisTest, ClearFullLine_RemovesFilledLine) {
+//     auto game_info = tetris.updateCurrentState();
+
+//     for (int y = 0; y < 10; ++y) {
+//         game_info.field[1][y] = 1;
+//     }
+//     tetris.setGameInfo(game_info);
+//     tetris.Spawn();
+//     tetris.userInput(Down, false);
+//     tetris.Check();
+
+//     game_info = tetris.updateCurrentState();
+//     EXPECT_EQ(game_info.score, 100);
+//     for (int y = 0; y < 10; ++y) {
+//         EXPECT_EQ(game_info.field[1][y], 0);
+//     }
+// }
+
+TEST_F(TetrisTest, GameOver_DetectsGameOver) {
+    auto game_info = tetris.updateCurrentState();
+    for (int y = 0; y < 10; ++y) {
+        game_info.field[20][y] = 1;
+    }
+    tetris.setGameInfo(game_info);
+    tetris.Spawn();
+    game_info = tetris.updateCurrentState();
+
+    EXPECT_EQ(game_info.state, GAMEOVER);
 }

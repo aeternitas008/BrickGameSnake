@@ -134,6 +134,10 @@ class Tetris : public Game {
     return *tetris_;
   }
 
+  void setGameInfo(GameInfo_t game_info) {
+    *game_info_ = game_info;
+  }
+
 };
 
 #endif

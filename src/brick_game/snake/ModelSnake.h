@@ -102,6 +102,9 @@ class Snake : public Game {
     return *snake_info_;
   }
 
+  void setState(State_t state) {
+    game_info_->state = state;
+  }
 
 };
 

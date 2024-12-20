@@ -1,10 +1,10 @@
-XX = g++
+CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Werror
-LDFLAGS = -lgtest -lpthread
+LDFLAGS =  -lgtest -lgtest_main 
 
-MODELS = brick_game/tetris/ModelTetris.cpp brick_game/snake/ModelSnake.cpp
+SRC = brick_game/tetris/ModelTetris.cpp brick_game/snake/ModelSnake.cpp brick_game/Game.h brick_game/defines.h
 TESTS = tests/TetrisTest.cpp tests/SnakeTest.cpp
-MAIN_TEST = tests/main.cpp
+# MAIN_TEST = tests/main.cpp
 # Имя основного Makefile
 all: build-qt build-console
 
@@ -24,9 +24,9 @@ clean:
 
 .PHONY: all build-qt build-console clean
 
-test: $(MODELS) $(TESTS) $(MAIN_TEST) 
-	$(CXX) $(CXXFLAGS) $^  -o tests $(LDFLAGS)
-	./tests
+test: 
+	$(CXX) $(CXXFLAGS) $(SRC) $(TESTS)  -o resultTest $(LDFLAGS)
+	./resultTest
 
 dvi:
 

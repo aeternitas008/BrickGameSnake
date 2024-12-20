@@ -2,6 +2,9 @@
 #define GAME_H
 
 #include "defines.h"
+#include <cstdio>
+#include <time.h>
+#include <cstdlib>
 
 class Game {
 protected:
