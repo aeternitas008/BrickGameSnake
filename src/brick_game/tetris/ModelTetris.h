@@ -101,6 +101,21 @@ class Tetris : public Game {
   Tetris();
 
   /**
+   * @brief Деструктор класса Snake.
+   *
+   * Очищает память выделенную для структуры.
+   */
+  void DestructorTetris() {
+    if (tetris_) {
+        delete tetris_->tetramino;
+        delete tetris_->tetramino->point;
+        delete tetris_->time;
+        delete tetris_;
+        tetris_ = nullptr;
+      }
+    }
+
+  /**
    * @brief Обрабатывает пользовательский ввод.
    *
    * @param signal Тип действия пользователя.

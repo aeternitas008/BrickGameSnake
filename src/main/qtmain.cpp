@@ -29,6 +29,5 @@ int main(int argc, char* argv[]) {
 
   view = new BrickGame(*game);
   view->show();
-
   return app.exec();
 }

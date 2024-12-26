@@ -5,7 +5,7 @@ LDFLAGS =  -lgtest -lgtest_main
 SRC = brick_game/tetris/ModelTetris.cpp brick_game/snake/ModelSnake.cpp brick_game/Game.h brick_game/defines.h
 TESTS = tests/TetrisTest.cpp tests/SnakeTest.cpp
 
-all: clean install test dist dvi clng_test
+all: clean clng_test install test dist dvi 
 
 # Cборка QtGame
 build-qt:

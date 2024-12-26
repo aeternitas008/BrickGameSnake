@@ -99,6 +99,21 @@ class Snake : public Game {
   Snake();
 
   /**
+   * @brief Деструктор класса Snake.
+   *
+   * Очищает память выделенную для структуры.
+   */
+  void DestructorSnake() {
+    if (snake_info_) {
+        delete snake_info_->time;
+        delete snake_info_->snake;
+        delete snake_info_->apple;
+        delete snake_info_;
+        snake_info_ = nullptr;
+      }
+    }
+
+  /**
    * @brief Инициализирует сохранение рекордов (для тестирования).
    */
   void NewStatsSaveInit() { StatsSave(SCORE_FILE_SNK); };
