@@ -60,8 +60,6 @@ struct SnakeInfo_t {
  * @brief Класс, реализующий игру "Змейка".
  */
 class Snake : public Game {
-  friend class SnakeTest;
-
  private:
   static inline SnakeInfo_t
       *snake_info_; /**< Указатель на текущую информацию о змейке. */

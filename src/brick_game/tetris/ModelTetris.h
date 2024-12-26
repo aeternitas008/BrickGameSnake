@@ -88,8 +88,6 @@ struct Tetris_t {
  * @brief Класс, реализующий игру "Тетрис".
  */
 class Tetris : public Game {
-  friend class TetrisTest;
-
  private:
   static inline Tetris_t
       *tetris_; /**< Указатель на информацию об игре "Тетрис". */
