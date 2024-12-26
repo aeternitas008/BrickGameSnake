@@ -965,8 +965,14 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ./brick_game/*/*.h ./brick_game/*.h ./gui/*/*.h
-
+# INPUT                  = ./brick_game/*/*.h ./brick_game/*.h ./gui/*/*.h ./brick_game/snake/ModelSnake.h
+INPUT = brick_game/snake/ModelSnake.h \
+        brick_game/tetris/ModelTetris.h \
+        brick_game/defines.h \
+        brick_game/Game.h \
+        brick_game/GameController.h \
+        brick_game/InputHandler.h \
+        
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
 # libiconv (or the iconv built into libc) for the transcoding. See the libiconv

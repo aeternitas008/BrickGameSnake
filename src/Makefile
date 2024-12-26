@@ -58,6 +58,6 @@ clng_test:
 	clang-format -style=google -n ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp
 
 git:
-	git add ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp Makefile
+	git add ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp Makefile Doxyfile
 	git commit -m "release 1.0"
 	git push origin develop
