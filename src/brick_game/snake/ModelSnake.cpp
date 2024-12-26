@@ -1,16 +1,28 @@
 #include "ModelSnake.h"
+
 #include "../defines.h"
 
+Snake::Snake() : Game() {
+  if (!snake_info_) {
+    snake_info_ = new SnakeInfo_t;
+    snake_info_->time = new timespec;
+    snake_info_->snake = new Snake_t;
+    snake_info_->apple = new Position_t;
+    GetRandomCoordiantes();
+    StatsInit();
+  }
+}
+
 void Snake::SumSnake(GameInfo_t *game_info, SnakeInfo_t snake_info) {
-    int x, y;
-    for (unsigned long i = 0; i < snake_info.snake->points.size(); i++) {
-        x = snake_info.snake->points[i].x;
-        y = snake_info.snake->points[i].y;
-        game_info->field[x][y] = 1;
-    }
-    x = snake_info.apple->x;
-    y = snake_info.apple->y;
-    game_info->field[x][y] = 2;  // для отображения другим цветом
+  int x, y;
+  for (unsigned long i = 0; i < snake_info.snake->points.size(); i++) {
+    x = snake_info.snake->points[i].x;
+    y = snake_info.snake->points[i].y;
+    game_info->field[x][y] = 1;
+  }
+  x = snake_info.apple->x;
+  y = snake_info.apple->y;
+  game_info->field[x][y] = 2;  // для отображения другим цветом
 }
 
 int Snake::IsBodySnake(Position_t point) {
@@ -51,7 +63,9 @@ int Snake::IsCollision(Position_t point) {
 
 int Snake::IsEating(Position_t new_point) {
   int result = 0;
-  if (snake_info_->apple->x == new_point.x && snake_info_->apple->y == new_point.y) result = 1;
+  if (snake_info_->apple->x == new_point.x &&
+      snake_info_->apple->y == new_point.y)
+    result = 1;
   return result;
 }
 
@@ -84,19 +98,27 @@ void Snake::Spawn() {
 }
 
 void Snake::MoveUp() {
-  if (snake_info_->snake->points.front().x - 1 != snake_info_->snake->points[1].x) snake_info_->snake->direction = UP_DIRECTION;
+  if (snake_info_->snake->points.front().x - 1 !=
+      snake_info_->snake->points[1].x)
+    snake_info_->snake->direction = UP_DIRECTION;
   game_info_->state = SHIFTING;
 }
 void Snake::MoveDown() {
-  if (snake_info_->snake->points.front().x + 1 != snake_info_->snake->points[1].x)snake_info_->snake->direction = DOWN_DIRECTION;
+  if (snake_info_->snake->points.front().x + 1 !=
+      snake_info_->snake->points[1].x)
+    snake_info_->snake->direction = DOWN_DIRECTION;
   game_info_->state = SHIFTING;
 }
 void Snake::MoveRight() {
-  if (snake_info_->snake->points.front().y + 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = RIGHT_DIRECTION;
+  if (snake_info_->snake->points.front().y + 1 !=
+      snake_info_->snake->points[1].y)
+    snake_info_->snake->direction = RIGHT_DIRECTION;
   game_info_->state = SHIFTING;
 }
 void Snake::MoveLeft() {
-  if (snake_info_->snake->points.front().y - 1 != snake_info_->snake->points[1].y)snake_info_->snake->direction = LEFT_DIRECTION;
+  if (snake_info_->snake->points.front().y - 1 !=
+      snake_info_->snake->points[1].y)
+    snake_info_->snake->direction = LEFT_DIRECTION;
   game_info_->state = SHIFTING;
 }
 
@@ -104,13 +126,13 @@ void Snake::MoveForward() {
   Snake_t *snake = snake_info_->snake;
   Position_t new_point = snake->points.front();
   if (snake->direction == UP_DIRECTION) {
-    new_point.x-=1;
+    new_point.x -= 1;
   } else if (snake->direction == RIGHT_DIRECTION) {
-    new_point.y+=1;
+    new_point.y += 1;
   } else if (snake->direction == DOWN_DIRECTION) {
-    new_point.x+=1;
+    new_point.x += 1;
   } else if (snake->direction == LEFT_DIRECTION) {
-    new_point.y-=1;
+    new_point.y -= 1;
   }
   if (IsCollision(new_point)) {
     game_info_->state = GAMEOVER;
@@ -127,12 +149,19 @@ void Snake::MoveForward() {
   }
 }
 
+// Приём сигналов и обработка по конечному автомату , немного отличается от
+// тетриса за счёт других функций и механики
 void Snake::userInput(UserAction_t signal, bool hold) {
   typedef void (Snake::*action)();
-  action fsm_simple[6] = { nullptr, &Snake::Spawn, nullptr, &Snake::Shifting, &Snake::GameOver, &Snake::ExitState };
+  action fsm_simple[6] = {nullptr,          &Snake::Spawn,
+                          nullptr,          &Snake::Shifting,
+                          &Snake::GameOver, &Snake::ExitState};
   action fsm_table[2][9] = {
-      { &Snake::StartGame, nullptr, &Snake::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
-      { &Snake::Check, &Snake::GamePause, &Snake::ExitState, &Snake::MoveLeft, &Snake::MoveRight, &Snake::MoveUp, &Snake::MoveDown, nullptr, &Snake::Check },
+      {&Snake::StartGame, nullptr, &Snake::ExitState, nullptr, nullptr, nullptr,
+       nullptr, nullptr, nullptr},
+      {&Snake::Check, &Snake::GamePause, &Snake::ExitState, &Snake::MoveLeft,
+       &Snake::MoveRight, &Snake::MoveUp, &Snake::MoveDown, nullptr,
+       &Snake::Check},
   };
   action act = nullptr;
   if (game_info_->state != MOVING && game_info_->state != START) {

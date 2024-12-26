@@ -1,18 +1,30 @@
 #include "ModelTetris.h"
 
-bool Tetris::isUnique(int tetramino, const std::array<int, 4>& last_tetraminos) {
-  for (const auto& t : last_tetraminos) {
-      if (tetramino == t) {
-          return false;
-      }
+Tetris::Tetris() : Game() {
+  if (!tetris_) {
+    tetris_ = new Tetris_t;
+    tetris_->tetramino = new Tetramino_t;
+    tetris_->tetramino->point = new Position_t;
+    tetris_->time = new timespec;
+    StatsInit();
+    GetPseudoRandomTypeTetramino();
+  }
+}
+
+bool Tetris::isUnique(int tetramino,
+                      const std::array<int, 4> &last_tetraminos) {
+  for (const auto &t : last_tetraminos) {
+    if (tetramino == t) {
+      return false;
+    }
   }
   return true;
 }
 
 void Tetris::AddTypeTetramino(int tetramino) {
-std::array<int, 4>& last_tetraminos = tetris_->tetramino->last_tetramino;
+  std::array<int, 4> &last_tetraminos = tetris_->tetramino->last_tetramino;
   for (unsigned long i = 1; i < last_tetraminos.size(); i++) {
-      last_tetraminos[i - 1] = last_tetraminos[i];
+    last_tetraminos[i - 1] = last_tetraminos[i];
   }
   last_tetraminos.back() = tetramino;
 }
@@ -36,7 +48,8 @@ void Tetris::GetFigure(Tetramino_t *tetramino) {
   if (tetramino->type >= 1 && tetramino->type <= 3) {
     key = (tetramino->type - 1) * 2 + (tetramino->variant % 2) + 1;
   } else if (tetramino->type >= 4 && tetramino->type <= 6) {
-    key = tetramino->variant + (tetramino->type == 4 ? 7 : (tetramino->type == 5 ? 11 : 15));
+    key = tetramino->variant +
+          (tetramino->type == 4 ? 7 : (tetramino->type == 5 ? 11 : 15));
   }
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
@@ -47,7 +60,7 @@ void Tetris::GetFigure(Tetramino_t *tetramino) {
 
 int Tetris::CheckNewVariant() {
   Tetramino_t tetramino_test = *tetris_->tetramino;
- tetramino_test.variant = (tetramino_test.variant + 1) % 4;
+  tetramino_test.variant = (tetramino_test.variant + 1) % 4;
   GetFigure(&tetramino_test);
   return CheckTetramino(tetramino_test);
 }
@@ -73,7 +86,7 @@ void Tetris::AddTetraminoOnBoard() {
     for (int y = 0; y < 4; y++) {
       if (tetris_->tetramino->figure[x][y] == 1) {
         game_info_->field[tetris_->tetramino->point->x + x]
-                        [tetris_->tetramino->point->y + y] = 1;
+                         [tetris_->tetramino->point->y + y] = 1;
       }
     }
   }
@@ -190,7 +203,7 @@ bool Tetris::IsNotBlockBelow() {
         result = 0;
       } else if (tetris_->tetramino->figure[x][y] &&
                  game_info_->field[tetris_->tetramino->point->x + x + 1]
-                                 [tetris_->tetramino->point->y + y])
+                                  [tetris_->tetramino->point->y + y])
         result = 0;
     }
   }
@@ -204,7 +217,7 @@ bool Tetris::IsBlockRight() {
       if (tetris_->tetramino->figure[x][y] &&
           (tetris_->tetramino->point->y + y >= 9 ||
            game_info_->field[tetris_->tetramino->point->x + x]
-                           [tetris_->tetramino->point->y + y + 1])) {
+                            [tetris_->tetramino->point->y + y + 1])) {
         result = 0;
       }
     }
@@ -219,7 +232,7 @@ bool Tetris::IsBlockLeft() {
       if (tetris_->tetramino->figure[x][y] &&
           (tetris_->tetramino->point->y + y <= 0 ||
            game_info_->field[tetris_->tetramino->point->x + x]
-                           [tetris_->tetramino->point->y + y - 1])) {
+                            [tetris_->tetramino->point->y + y - 1])) {
         result = 0;
       }
     }
@@ -266,12 +279,18 @@ void Tetris::TurnRight() {
   game_info_->state = SHIFTING;
 }
 
+// Приём сигналов и обработка по конечному автомату
 void Tetris::userInput(UserAction_t signal, bool hold) {
   typedef void (Tetris::*action)();
-  action fsm_simple[6] = { nullptr, &Tetris::Spawn, nullptr, &Tetris::Shifting, &Tetris::GameOver, &Tetris::ExitState };
+  action fsm_simple[6] = {nullptr,           &Tetris::Spawn,
+                          nullptr,           &Tetris::Shifting,
+                          &Tetris::GameOver, &Tetris::ExitState};
   action fsm_table[2][9] = {
-      { &Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
-      { &Tetris::Check, &Tetris::GamePause, &Tetris::ExitState, &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp, &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check },
+      {&Tetris::StartGame, nullptr, &Tetris::ExitState, nullptr, nullptr,
+       nullptr, nullptr, nullptr, nullptr},
+      {&Tetris::Check, &Tetris::GamePause, &Tetris::ExitState,
+       &Tetris::MoveLeft, &Tetris::MoveRight, &Tetris::MoveUp,
+       &Tetris::MoveDown, &Tetris::TurnRight, &Tetris::Check},
   };
   action act = nullptr;
   tetris_->hold = hold;
@@ -290,10 +309,8 @@ void Tetris::SumTetris(GameInfo_t *game_info, Tetramino_t tetramino) {
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 4; y++) {
       if (tetramino.figure[x][y] == 1) {
-        game_info->field[tetramino.point->x + x]
-                        [tetramino.point->y + y] = 1;
+        game_info->field[tetramino.point->x + x][tetramino.point->y + y] = 1;
       }
     }
   }
 }
-
