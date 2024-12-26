@@ -5,7 +5,7 @@ LDFLAGS =  -lgtest -lgtest_main
 SRC = brick_game/tetris/ModelTetris.cpp brick_game/snake/ModelSnake.cpp brick_game/Game.h brick_game/defines.h
 TESTS = tests/TetrisTest.cpp tests/SnakeTest.cpp
 
-all: install
+all: clean install test dist dvi clng_test
 
 # Cборка QtGame
 build-qt:
@@ -20,6 +20,8 @@ clean:
 	cd main && qmake ConsoleGame.pro && $(MAKE) clean
 	rm -f main/Makefile main/.qmake.*
 	rm -f tests/*.out
+	rm -rf ./result
+	rm -rf ./zip
 
 .PHONY: all build-qt build-console clean
 
@@ -32,7 +34,8 @@ dvi:
 	open result/html/index.html
 
 dist:
-	tar -czf ./out/tetris.install.tar.gz ./* 
+	mkdir zip
+	tar -czf ./zip/brickGame.tar.gz ./* 
 
 install: build-qt build-console
 
@@ -52,12 +55,12 @@ snake_c:
 	./bin/consoleGame
 
 clng:
-	clang-format -style=google -i ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp
+	clang-format -style=google -i ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/qtmain.cpp ./main/consoleMain.cpp ./tests/*.cpp
 
 clng_test:
-	clang-format -style=google -n ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp
+	clang-format -style=google -n ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/qtmain.cpp ./main/consoleMain.cpp ./tests/*.cpp
 
 git:
-	git add ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/*.cpp ./tests/*.cpp Makefile Doxyfile
+	git add ./brick_game/*.* ./brick_game/*/*.* ./gui/*/*.* ./main/qtmain.cpp ./main/consoleMain.cpp ./tests/*.cpp Makefile Doxyfile
 	git commit -m "release 1.0"
 	git push origin develop
