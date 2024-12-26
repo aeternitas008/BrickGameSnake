@@ -29,6 +29,7 @@ test:
 
 dvi:
 	doxygen Doxyfile
+	open result/html/index.html
 
 dist:
 	tar -czf ./out/tetris.install.tar.gz ./* 
