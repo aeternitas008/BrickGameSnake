@@ -105,13 +105,13 @@ class Snake : public Game {
    */
   void DestructorSnake() {
     if (snake_info_) {
-        delete snake_info_->time;
-        delete snake_info_->snake;
-        delete snake_info_->apple;
-        delete snake_info_;
-        snake_info_ = nullptr;
-      }
+      delete snake_info_->time;
+      delete snake_info_->snake;
+      delete snake_info_->apple;
+      delete snake_info_;
+      snake_info_ = nullptr;
     }
+  }
 
   /**
    * @brief Инициализирует сохранение рекордов (для тестирования).

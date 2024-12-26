@@ -107,13 +107,13 @@ class Tetris : public Game {
    */
   void DestructorTetris() {
     if (tetris_) {
-        delete tetris_->tetramino;
-        delete tetris_->tetramino->point;
-        delete tetris_->time;
-        delete tetris_;
-        tetris_ = nullptr;
-      }
+      delete tetris_->tetramino;
+      delete tetris_->tetramino->point;
+      delete tetris_->time;
+      delete tetris_;
+      tetris_ = nullptr;
     }
+  }
 
   /**
    * @brief Обрабатывает пользовательский ввод.
