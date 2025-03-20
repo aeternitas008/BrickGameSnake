@@ -84,7 +84,7 @@ Ko'rinish modeli, bir tomondan, ko'rinishning abstraksiyasi, boshqa tomondan esa
 
 BrickGame v2.0 ni amalga oshiring:
 
-- Dastur C++ 17 standarti C++ tilida ishlab chiqilgan bo'lishi kerak.
+- Dastur C++20 standarti C++ tilida ishlab chiqilgan bo'lishi kerak.
 - Dastur ikki qismdan iborat bo'lishi kerak: iloncha o'yini mantig'ini amalga oshiradigan kutubxona va desktop interfeysi.
 - O'yin mantig'ini formallashtirish uchun so’nggi avtomatdan foydalanish kerak.
 - Kutubxona BrickGame ning birinchi qismida berilgan spetsifikatsiyaga mos kelishi kerak (uni materials/library-specification_UZB.md sahifasida topish mumkin).
@@ -94,7 +94,7 @@ BrickGame v2.0 ni amalga oshiring:
 - Sinflar `s21` nomli maydoni ichida amalga oshirilishi kerak
 - O'yin mantig'ini amalga oshiradigan kutubxona unit testlar bilan qamrab olinishi kerak. KA holati va o'tishlarini tekshirishga alohida e'tibor bering. Testlar uchun GTest kutubxonasidan foydalaning. Kutubxonaning testlar bilan qamrab olinishi kamida 80 foizni tashkil qilishi kerak.
 - Dastur GNU dasturlari uchun standart maqsadlar to'plamiga ega Makefile yordamida tuzilishi kerak: all, install, uninstall, clean, dvi, dist, test. O'rnatish boshqa har qanday boshqa ixtiyoriy katalogda amalga oshirilishi kerak.
-- Amalga oshirish C++17 uchun API ga ega GUI kutubxonalaridan biriga asoslangan grafik foydalanuvchi interfeysi bilan boʻlishi kerak:
+- Amalga oshirish C++20 uchun API ga ega GUI kutubxonalaridan biriga asoslangan grafik foydalanuvchi interfeysi bilan boʻlishi kerak:
   - Qt 
   - GTK+
 - Dastur MVC patterni yordamida amalga oshirilishi kerak, shuningdek:
@@ -132,7 +132,3 @@ Ochkolar quyidagicha beriladi: keyingi "olma" yeyilganida, bir ochko qo'shiladi.
 ### 3-qism. Qo'shimcha. Darajalar mexanikasi
 
 O'yinga darajalar mexanikasini qo'shing. O'yinchi har safar 5 ball to'plaganida, daraja 1 ga oshadi. Darajani oshirish ilonning tezligini oshiradi. Maksimal darajalar soni – 10.
-
-___
-
-Loyihada siz kod-revyu tekshiruvidan o‘tishingiz talab etiladi — jarayon va qoidalar bilan [havola](https://applicant.21-school.ru/code_review) orqali tanishib chiqishni unutmang..
